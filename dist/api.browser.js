@@ -1,0 +1,254 @@
+(() => {
+  // src/AccessibilityTree.ts
+  var AccessibilityTree = class {
+    root;
+    rootWebArea = null;
+    constructor(root) {
+      this.root = root;
+    }
+    // PUBLIC
+    toObject() {
+      return this.rootWebArea;
+    }
+    toString() {
+      return JSON.stringify(this.rootWebArea ?? {}, null, 4);
+    }
+    build() {
+      this.rootWebArea = {
+        children: this.buildTree(this.root),
+        name: this.root?.title ?? "",
+        properties: {},
+        role: "RootWebArea",
+        source: this.root?.documentElement ?? this.root,
+        states: {}
+      };
+      return this;
+    }
+    traverse(nodeCb) {
+      if (!this.rootWebArea) return;
+      const traverseNode = (node, depth, parent) => {
+        nodeCb(node, depth, parent);
+        for (let child of node.children) {
+          traverseNode(child, depth + 1, node);
+        }
+      };
+      traverseNode(this.rootWebArea, 0);
+    }
+    findByRole(role) {
+      const matches = [];
+      this.traverse((node) => {
+        if (node.role !== role) return;
+        matches.push(node);
+      });
+      return matches;
+    }
+    findByName(text) {
+      const matches = [];
+      this.traverse((node) => {
+        if (!node.name || !node.name.toLowerCase().includes(text.toLowerCase())) return;
+        matches.push(node);
+      });
+      return matches;
+    }
+    // PRIVATE
+    buildTree(root) {
+      const start = root.documentElement ? root.body || root.documentElement : root;
+      const result = [];
+      for (let element of Array.from(start.children)) {
+        const node = this.elementToAccessibilityNode(element, /* @__PURE__ */ new Set());
+        node && result.push(node);
+      }
+      return result;
+    }
+    createNode(role, name, states, properties, children, source, description, value) {
+      return {
+        role,
+        name,
+        description,
+        value,
+        states,
+        properties,
+        children,
+        source
+      };
+    }
+    elementToAccessibilityNode(element, owningChain) {
+      if (this.isHidden(element)) return null;
+      const role = (element.getAttribute("role") || "").trim() || this.getImplicitRole(element);
+      if (["none", "presentation"].includes(role)) {
+        const children2 = [];
+        for (let childElement of Array.from(element.children)) {
+          const childNode = this.elementToAccessibilityNode(childElement, owningChain);
+          if (childNode) children2.push(childNode);
+        }
+        if (children2.length === 0) return null;
+        if (children2.length === 1) return children2[0];
+        return this.createNode("group", "", {}, {}, children2, element);
+      }
+      const name = this.computeAccessibleName(element, /* @__PURE__ */ new Set());
+      const description = this.computeAccessibleDescription(element, /* @__PURE__ */ new Set());
+      const states = this.computeStates(element, role);
+      const properties = this.computeProperties(element, role);
+      const children = [];
+      if (!this.isLeafRole(role)) {
+        for (let childElement of Array.from(element.children)) {
+          const childNode = this.elementToAccessibilityNode(childElement, owningChain);
+          childNode && children.push(childNode);
+        }
+      }
+      const owns = (element.getAttribute("aria-owns") || "").trim();
+      for (let id of (owns ?? "").split(/\s+/)) {
+        const owned = element.ownerDocument?.getElementById(id);
+        if (!owned || owningChain.has(owned)) continue;
+        owningChain.add(owned);
+        const ownedNode = this.elementToAccessibilityNode(owned, owningChain);
+        owningChain.delete(owned);
+        if (ownedNode) children.push(ownedNode);
+      }
+      const value = this.computeValue(element, role);
+      return this.createNode(role, name, states, properties, children, element, description, value);
+    }
+    isHidden(element) {
+      if (element.hidden) return true;
+      if (element.getAttribute("aria-hidden") === "true") return true;
+      try {
+        const view = element.ownerDocument?.defaultView;
+        if (view) {
+          const style = view.getComputedStyle(element);
+          if (style.display === "none" || style.visibility === "hidden" || style.visibility === "collapse") {
+            return true;
+          }
+        }
+      } catch {
+      }
+      return false;
+    }
+    getImplicitRole(element) {
+      const tagName = element.tagName.toLowerCase();
+      if (tagName === "a" && element.hasAttribute("href")) return "link";
+      if (tagName === "button") return "button";
+      if (tagName === "img") return "img";
+      if (/^h[1-6]$/.test(tagName)) return "heading";
+      if (tagName === "ul" || tagName === "ol") return "list";
+      if (tagName === "li") return "listitem";
+      if (tagName === "nav") return "navigation";
+      if (tagName === "main") return "main";
+      if (tagName === "header") return "banner";
+      if (tagName === "footer") return "contentinfo";
+      if (tagName === "section" || tagName === "article") return "region";
+      if (tagName !== "input") return "generic";
+      const type = (element.type || "").toLowerCase();
+      if (["button", "submit", "reset", "image"].includes(type)) return "button";
+      if (type === "checkbox") return "checkbox";
+      if (type === "radio") return "radio";
+      if (type === "range") return "slider";
+      return "textbox";
+    }
+    isLeafRole(role) {
+      return [
+        "button",
+        "checkbox",
+        "img",
+        "option",
+        "radio",
+        "slider",
+        "textbox"
+      ].includes(role);
+    }
+    computeAccessibleName(element, visited) {
+      if (visited.has(element)) return "";
+      visited.add(element);
+      const labelledBy = (element.getAttribute("aria-labelledby") || "").trim();
+      if (labelledBy) {
+        const parts = [];
+        for (let id of labelledBy.split(/\s+/)) {
+          const referenced = element.ownerDocument?.getElementById(id);
+          if (!referenced || this.isHidden(referenced)) continue;
+          parts.push(this.computeText(referenced, new Set(visited)));
+        }
+        if (parts.length) return parts.join(" ").trim();
+      }
+      const ariaLabel = (element.getAttribute("aria-label") || "").trim();
+      if (ariaLabel) return ariaLabel;
+      const hostLanguageName = this.hostLanguageName(element);
+      if (hostLanguageName) return hostLanguageName;
+      const title = (element.getAttribute("title") || "").trim();
+      if (title) return title;
+      return this.computeText(element, new Set(visited));
+    }
+    computeAccessibleDescription(element, visited) {
+      if (visited.has(element)) return "";
+      visited.add(element);
+      const describedBy = (element.getAttribute("aria-describedby") || "").trim();
+      if (!describedBy) {
+        return (element.getAttribute("title") || "").trim();
+      }
+      const parts = [];
+      for (let id of describedBy.split(/\s+/)) {
+        const referenced = element.ownerDocument?.getElementById(id);
+        if (!referenced || this.isHidden(referenced)) continue;
+        parts.push(this.computeText(referenced, new Set(visited)));
+      }
+      return parts.join(" ").trim();
+    }
+    computeText(element, visited) {
+      if (this.isHidden(element)) return "";
+      if (visited.has(element)) return "";
+      visited.add(element);
+      const text = [];
+      for (let node of Array.from(element.childNodes)) {
+        if (node.nodeType === 3) {
+          text.push(node.textContent || "");
+          continue;
+        }
+        if (node.nodeType === 1) {
+          text.push(` ${this.computeText(node, new Set(visited))}`);
+          continue;
+        }
+      }
+      return text.join("").trim();
+    }
+    hostLanguageName(element) {
+      const tagName = element.tagName.toLowerCase();
+      if (tagName === "img") {
+        return (element.getAttribute("alt") || "").trim();
+      }
+      if (tagName === "button" || /^h\d+$/.test(tagName)) {
+        return (element.textContent || "").trim();
+      }
+      if (tagName !== "input") return "";
+      const inputElement = element;
+      if (["button", "submit", "reset"].includes(inputElement.type) && inputElement.value) {
+        return inputElement.value;
+      }
+      return inputElement.getAttribute("placeholder") ?? "";
+    }
+    computeStates(element, role) {
+      const aria = (name) => (element.getAttribute(name) || "").trim();
+      const states = {};
+      states.disabled = aria("aria-disabled") === "true" || void 0;
+      states.expanded = aria("aria-expanded") === "true" || void 0;
+      if (role === "checkbox") {
+        states.checked = aria("aria-checked") === "true" || element.checked || void 0;
+      }
+      return states;
+    }
+    computeProperties(element, role) {
+      const properties = {};
+      if (role === "heading") {
+        const match = element.tagName.toLowerCase().match(/^h([1-6])$/);
+        properties.level = match ? parseInt(match[1]) : properties.level;
+      }
+      return properties;
+    }
+    computeValue(element, role) {
+      const value = element.getAttribute("aria-valuenow");
+      if (value) return value;
+      if (role === "textbox") return element.value || void 0;
+      return void 0;
+    }
+  };
+
+  // src/api.browser.ts
+  window.AccessibilityTree = AccessibilityTree;
+})();
