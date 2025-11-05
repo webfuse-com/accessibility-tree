@@ -38,3 +38,63 @@ assertEqual(
     expectedDOMTree,
     "Invalid accessibility tree object (string)"
 );
+
+
+const accessibilityNodesByName = accessibilityTree.findByName("All about Pasta");
+
+assertEqual(
+    accessibilityNodesByName.length,
+    2,
+    "Invalid findByName accessibility nodes count"
+);
+
+assertEqual(
+    accessibilityNodesByName[0].children.length,
+    4,
+    "Invalid findByName first accessibility node name children count"
+);
+
+assertEqual(
+    accessibilityNodesByName[0].name,
+    "All about Pasta",
+    "Invalid findByName first accessibility node name"
+);
+
+assertEqual(
+    accessibilityNodesByName[0].property,
+    undefined,
+    "Invalid findByName first accessibility node property"
+);
+
+assertEqual(
+    accessibilityNodesByName[0].role,
+    "region",
+    "Invalid findByName first accessibility node role"
+);
+
+assertEqual(
+    accessibilityNodesByName[0].source.toString(),
+    "[object HTMLElement]",
+    "Invalid findByName first accessibility node source"
+);
+
+assertEqual(
+    accessibilityNodesByName[0].states,
+    {
+        disabled: undefined,
+        expanded: undefined
+    },
+    "Invalid findByName first accessibility node states"
+);
+
+assertEqual(
+    accessibilityNodesByName[0].description,
+    "",
+    "Invalid findByName first accessibility node description"
+);
+
+assertEqual(
+    accessibilityNodesByName[0].value,
+    undefined,
+    "Invalid findByName first accessibility node value"
+);
