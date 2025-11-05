@@ -3,7 +3,7 @@
 // -------------------------------------
 
 
-import { AccessibilityTree } from "./api.ts";
+import { AccessibilityTree } from "./api.js";
 
 
 declare global {

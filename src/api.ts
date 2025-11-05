@@ -3,6 +3,4 @@
 // -------------------------------------
 
 
-export class AccessibilityTree {
-    
-}
+export { AccessibilityTree } from "./AccessibilityTree.js";
