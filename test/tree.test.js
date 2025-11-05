@@ -40,6 +40,66 @@ assertEqual(
 );
 
 
+const accessibilityNodesByRole = accessibilityTree.findByRole("banner");
+
+assertEqual(
+    accessibilityNodesByRole.length,
+    1,
+    "Invalid findByRole accessibility nodes count"
+);
+
+assertEqual(
+    accessibilityNodesByRole[0].children.length,
+    2,
+    "Invalid findByRole first accessibility node name children count"
+);
+
+assertEqual(
+    accessibilityNodesByRole[0].name,
+    "",
+    "Invalid findByRole first accessibility node name"
+);
+
+assertEqual(
+    accessibilityNodesByRole[0].property,
+    undefined,
+    "Invalid findByRole first accessibility node property"
+);
+
+assertEqual(
+    accessibilityNodesByRole[0].role,
+    "banner",
+    "Invalid findByRole first accessibility node role"
+);
+
+assertEqual(
+    accessibilityNodesByRole[0].source.toString(),
+    "[object HTMLElement]",
+    "Invalid findByRole first accessibility node source"
+);
+
+assertEqual(
+    accessibilityNodesByRole[0].states,
+    {
+        disabled: undefined,
+        expanded: undefined
+    },
+    "Invalid findByRole first accessibility node states"
+);
+
+assertEqual(
+    accessibilityNodesByRole[0].description,
+    "",
+    "Invalid findByRole first accessibility node description"
+);
+
+assertEqual(
+    accessibilityNodesByRole[0].value,
+    undefined,
+    "Invalid findByRole first accessibility node value"
+);
+
+
 const accessibilityNodesByName = accessibilityTree.findByName("All about Pasta");
 
 assertEqual(
