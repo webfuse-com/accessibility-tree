@@ -33,6 +33,10 @@ const rootNode = accessibilityTree.toObject();
     states: {}
 } */
 
+// Find accessibility nodes in the tree
+const bannerNodes = accessibilityTree.findByRole("banner");
+const allAboutPastaNodes = accessibilityTree.findByName("All about Pasta");
+
 // Update accessibility tree to reflect latest DOM state
 accessibilityTree.build();
 
