@@ -1,3 +1,37 @@
+// src/AccessibilityNode.ts
+var AccessibilityNode = class {
+  children;
+  name;
+  properties;
+  role;
+  source;
+  states;
+  description;
+  value;
+  constructor(children, name, role, properties, source, states, description, value) {
+    this.children = children;
+    this.name = name;
+    this.role = role;
+    this.properties = properties;
+    this.source = source;
+    this.states = states;
+    this.description = description;
+    this.value = value;
+  }
+  toString() {
+    return JSON.stringify({
+      children: this.children,
+      name: this.name,
+      role: this.role,
+      properties: this.properties,
+      source: this.source,
+      states: this.states,
+      description: this.description,
+      value: this.value
+    }, null, 4);
+  }
+};
+
 // src/AccessibilityTree.ts
 var AccessibilityTree = class {
   root;
@@ -10,17 +44,17 @@ var AccessibilityTree = class {
     return this.rootWebArea;
   }
   toString() {
-    return JSON.stringify(this.rootWebArea ?? {}, null, 4);
+    return this.rootWebArea ? this.rootWebArea.toString() : "{}";
   }
   build() {
-    this.rootWebArea = {
-      children: this.buildTree(this.root),
-      name: this.root?.title ?? "",
-      properties: {},
-      role: "RootWebArea",
-      source: this.root?.documentElement ?? this.root,
-      states: {}
-    };
+    this.rootWebArea = new AccessibilityNode(
+      this.buildTree(this.root),
+      this.root?.title ?? "",
+      "RootWebArea",
+      {},
+      this.root?.documentElement ?? this.root,
+      {}
+    );
     return this;
   }
   traverse(nodeCb) {
@@ -59,18 +93,6 @@ var AccessibilityTree = class {
     }
     return result;
   }
-  createNode(role, name, states, properties, children, source, description, value) {
-    return {
-      role,
-      name,
-      description,
-      value,
-      states,
-      properties,
-      children,
-      source
-    };
-  }
   elementToAccessibilityNode(element, owningChain) {
     if (this.isHidden(element)) return null;
     const role = (element.getAttribute("role") || "").trim() || this.getImplicitRole(element);
@@ -82,7 +104,7 @@ var AccessibilityTree = class {
       }
       if (children2.length === 0) return null;
       if (children2.length === 1) return children2[0];
-      return this.createNode("group", "", {}, {}, children2, element);
+      return new AccessibilityNode(children2, "", "group", {}, element, {});
     }
     const name = this.computeAccessibleName(element, /* @__PURE__ */ new Set());
     const description = this.computeAccessibleDescription(element, /* @__PURE__ */ new Set());
@@ -105,7 +127,7 @@ var AccessibilityTree = class {
       if (ownedNode) children.push(ownedNode);
     }
     const value = this.computeValue(element, role);
-    return this.createNode(role, name, states, properties, children, element, description, value);
+    return new AccessibilityNode(children, name, role, properties, element, states, description, value);
   }
   isHidden(element) {
     if (element.hidden) return true;

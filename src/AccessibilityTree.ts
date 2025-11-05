@@ -17,18 +17,18 @@ export class AccessibilityTree {
     }
 
     public toString(): string {
-        return JSON.stringify(this.rootWebArea ?? {}, null, 4);
+        return this.rootWebArea ? this.rootWebArea.toString() : "{}";
     }
 
     public build(): this {
-        this.rootWebArea = {
-            children: this.buildTree(this.root),
-            name: (this.root as Document)?.title ?? "",
-            properties: {},
-            role: "RootWebArea",
-            source: (this.root as Document)?.documentElement ?? this.root as HTMLElement,
-            states: {}
-        };
+        this.rootWebArea = new AccessibilityNode(
+            this.buildTree(this.root),
+            (this.root as Document)?.title ?? "",
+            "RootWebArea",
+            {},
+            (this.root as Document)?.documentElement ?? this.root as HTMLElement,
+            {}
+        );
 
         return this;
     }
@@ -88,28 +88,6 @@ export class AccessibilityTree {
         return result;
     }
 
-    private createNode(
-        role: string,
-        name: string,
-        states: Record<string, any>,
-        properties: Record<string, any>,
-        children: AccessibilityNode[],
-        source: Element,
-        description?: string,
-        value?: string
-    ): AccessibilityNode {
-        return {
-            role,
-            name,
-            description,
-            value,
-            states,
-            properties,
-            children,
-            source
-        };
-    }
-
     private elementToAccessibilityNode(element: Element, owningChain: Set<Element>): AccessibilityNode | null {
         if(this.isHidden(element)) return null;
 
@@ -124,7 +102,7 @@ export class AccessibilityTree {
             if(children.length === 0) return null;
             if(children.length === 1) return children[0];
 
-            return this.createNode("group", "", {}, {}, children, element);
+            return new AccessibilityNode(children, "", "group", {}, element, {});
         }
 
         const name = this.computeAccessibleName(element, new Set());
@@ -153,7 +131,7 @@ export class AccessibilityTree {
 
         const value = this.computeValue(element, role);
 
-        return this.createNode(role, name, states, properties, children, element, description, value);
+        return new AccessibilityNode(children, name, role, properties, element, states, description, value);
     }
 
     private isHidden(element: Element): boolean {
