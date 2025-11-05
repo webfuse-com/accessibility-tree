@@ -6,6 +6,11 @@ import { join } from "path";
 const TEST_DIR_PATH = import.meta.dirname;
 
 
+process.on("exit", () => {
+    process.stdout.write("\n");
+});
+
+
 function printAssertionError(err, message) {
     process.stdout.write(`\x1b[31m${message}\x1b[0m\n`);
     console.log("\x1b[2mActual:\x1b[0m");
