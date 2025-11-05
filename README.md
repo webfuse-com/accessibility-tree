@@ -1,6 +1,59 @@
 # Accessibility Tree
 
-Create an accessibility tree from a document object model close to [W3C Working Draft: Accessible Name and Description Computation 1.2](https://w3c.github.io/accname/).
+Create an accessibility tree from a document object model (DOM).
+
+> The implementation closely adopts the [W3C Working Draft: Accessible Name and Description Computation 1.2](https://w3c.github.io/accname/).
+
+## Install
+
+``` html
+<script src="https://cdn.jsdelivr.net/gh/webfuse-com/accessibility-tree@main/dist/api.browser.js"></script>
+```
+
+## Use
+
+``` js
+// Create tree instance
+const accessibilityTree = new AccessibilityTree(document.documentElement);
+
+// Build accessibility tree
+accessibilityTree.build();
+
+// Work with accessibility tree
+const treeStr = accessibilityTree.toString();
+const rootNode = accessibilityTree.toObject();
+/* {
+    role: "RootWebArea",
+    name: "",
+    children: [
+        // ...
+    ]
+    properties: {},
+    source: document.documentElement,
+    states: {}
+} */
+
+// Update accessibility tree to reflect latest DOM state
+accessibilityTree.build();
+
+// ...
+```
+
+``` ts
+type AccessibilityNode = {
+    children: AccessibilityNode[];
+    name: string;
+    properties: Record<string, unknown>;
+    role: string;
+    source: Element;
+    states: Record<string, boolean | undefined>;
+
+    description?: string;
+    value?: string;
+};
+```
+
+## Example
 
 ``` html
 <!DOCTYPE html>
