@@ -16,6 +16,10 @@ export class AccessibilityTree {
         return this.rootWebArea;
     }
 
+    public toString(): string {
+        return JSON.stringify(this.rootWebArea ?? {}, null, 4);
+    }
+
     public build(): this {
         this.rootWebArea = {
             children: this.buildTree(this.root),
