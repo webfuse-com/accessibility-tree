@@ -13,8 +13,11 @@ Create an accessibility tree from a document object model (DOM).
 ## Use
 
 ``` js
+// const dom = parseDOM("<!DOCTYPE html><html>...</html>");
+   const dom = document.documentElement;
+
 // Create tree instance
-const accessibilityTree = new AccessibilityTree(document.documentElement);
+const accessibilityTree = new AccessibilityTree(dom);
 
 // Build accessibility tree
 accessibilityTree.build();
@@ -56,6 +59,8 @@ type AccessibilityNode = {
     value?: string;
 };
 ```
+
+> The role of accessibility tree root nodes is `RootWebArea` as implemented with [Google Chrome](https://developer.chrome.com/blog/full-accessibility-tree). 
 
 ## Example
 
