@@ -1,14 +1,10 @@
 import { readFileSync, writeFileSync } from "fs";
 import { join } from "path";
 
-import { JSDOM } from "jsdom";
-
-import { AccessibilityTree } from "../dist/api.js";
+import { parseDOM, AccessibilityTree } from "../dist/api.js";
 
 
-const dom = new JSDOM(
-    readFileSync(join(import.meta.dirname, "dom.html")).toString()
-).window.document.documentElement;
+const dom = parseDOM(readFileSync(join(import.meta.dirname, "dom.html")).toString());
 
 const expectedDOMTree = readFileSync(join(import.meta.dirname, "dom.tree.expected.json")).toString();
 

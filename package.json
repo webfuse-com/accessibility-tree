@@ -12,8 +12,10 @@
     "build": "npm run build:lib && npm run build:browser",
     "test": "node ./test/test.js"
   },
-  "devDependencies": {
-    "esbuild": "^0.25.4",
+  "dependencies": {
     "jsdom": "^22.1.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.4"
   }
 }

@@ -1,3 +1,6 @@
+// src/api.ts
+import { JSDOM } from "jsdom";
+
 // src/AccessibilityNode.ts
 var AccessibilityNode = class {
   children;
@@ -269,6 +272,12 @@ var AccessibilityTree = class {
     return void 0;
   }
 };
+
+// src/api.ts
+function parseDOM(html) {
+  return new JSDOM(html).window.document.documentElement;
+}
 export {
-  AccessibilityTree
+  AccessibilityTree,
+  parseDOM
 };
