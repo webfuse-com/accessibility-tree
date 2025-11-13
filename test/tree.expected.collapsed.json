@@ -1,0 +1,145 @@
+{
+    "children": [
+        {
+            "children": [
+                {
+                    "children": [
+                        {
+                            "children": [],
+                            "name": "Pasta Lovers",
+                            "properties": {
+                                "level": 1
+                            },
+                            "role": "heading"
+                        },
+                        {
+                            "children": [
+                                {
+                                    "children": [],
+                                    "role": "link"
+                                },
+                                {
+                                    "children": [],
+                                    "role": "link"
+                                }
+                            ],
+                            "name": "Main navigation",
+                            "role": "navigation"
+                        }
+                    ],
+                    "role": "banner"
+                },
+                {
+                    "children": [
+                        {
+                            "children": [
+                                {
+                                    "children": [],
+                                    "name": "A bowl of pasta",
+                                    "role": "img"
+                                },
+                                {
+                                    "children": [],
+                                    "name": "All about Pasta",
+                                    "properties": {
+                                        "level": 1
+                                    },
+                                    "role": "heading"
+                                },
+                                {
+                                    "children": [],
+                                    "role": "generic"
+                                },
+                                {
+                                    "children": [
+                                        {
+                                            "children": [],
+                                            "role": "listitem"
+                                        },
+                                        {
+                                            "children": [],
+                                            "role": "listitem"
+                                        },
+                                        {
+                                            "children": [],
+                                            "role": "listitem"
+                                        }
+                                    ],
+                                    "role": "list"
+                                }
+                            ],
+                            "name": "All about Pasta",
+                            "role": "region"
+                        },
+                        {
+                            "children": [
+                                {
+                                    "children": [],
+                                    "name": "Find a Recipe",
+                                    "properties": {
+                                        "level": 2
+                                    },
+                                    "role": "heading"
+                                },
+                                {
+                                    "children": [
+                                        {
+                                            "children": [],
+                                            "role": "generic"
+                                        },
+                                        {
+                                            "children": [],
+                                            "role": "generic"
+                                        },
+                                        {
+                                            "children": [
+                                                {
+                                                    "children": [],
+                                                    "role": "generic"
+                                                },
+                                                {
+                                                    "children": [],
+                                                    "role": "generic"
+                                                },
+                                                {
+                                                    "children": [],
+                                                    "role": "generic"
+                                                }
+                                            ],
+                                            "role": "generic"
+                                        },
+                                        {
+                                            "children": [],
+                                            "name": "Show pasta recipes",
+                                            "role": "button"
+                                        }
+                                    ],
+                                    "role": "generic",
+                                    "description": "Choose a pasta type to find matching recipes."
+                                },
+                                {
+                                    "children": [],
+                                    "role": "status"
+                                }
+                            ],
+                            "name": "Find a Recipe",
+                            "role": "region"
+                        }
+                    ],
+                    "role": "main"
+                },
+                {
+                    "children": [
+                        {
+                            "children": [],
+                            "role": "generic"
+                        }
+                    ],
+                    "role": "contentinfo"
+                }
+            ],
+            "role": "generic"
+        }
+    ],
+    "role": "RootWebArea"
+}

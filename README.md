@@ -127,6 +127,10 @@ type AccessibilityNode = {
 
 ``` json
 {
+    "role": "RootWebArea",
+    "name": "",
+    "states": {},
+    "properties": {},
     "children": [
         {
             "role": "generic",
@@ -401,10 +405,6 @@ type AccessibilityNode = {
             "source": {}
         }
     ],
-    "name": "",
-    "properties": {},
-    "role": "RootWebArea",
-    "source": {},
-    "states": {}
+    "source": {}
 }
 ```

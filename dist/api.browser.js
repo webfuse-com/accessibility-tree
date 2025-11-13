@@ -1,6 +1,25 @@
 (() => {
   // src/AccessibilityNode.ts
-  var AccessibilityNode = class {
+  var AccessibilityNode = class _AccessibilityNode {
+    static propertyIsEmpty(value) {
+      if (value === null || value === void 0) return true;
+      if (Array.isArray(value) && value.length === 0) return true;
+      if (typeof value === "string" && !value.trim().length) return true;
+      if (Object.getPrototypeOf(value).constructor.name !== "Object" && !Object.keys(value).length) return true;
+      return false;
+    }
+    static filter(obj) {
+      for (let prop in obj) {
+        if (prop === "children") {
+          obj[prop] = obj[prop].map((child) => _AccessibilityNode.filter(child));
+          continue;
+        }
+        if (prop === "source" || _AccessibilityNode.propertyIsEmpty(obj[prop])) {
+          delete obj[prop];
+        }
+      }
+      return obj;
+    }
     children;
     name;
     properties;
@@ -19,8 +38,8 @@
       this.description = description;
       this.value = value;
     }
-    toString() {
-      return JSON.stringify({
+    toString(collapseEmptyProperties = false) {
+      const obj = {
         children: this.children,
         name: this.name,
         role: this.role,
@@ -29,7 +48,12 @@
         states: this.states,
         description: this.description,
         value: this.value
-      }, null, 4);
+      };
+      return JSON.stringify(
+        collapseEmptyProperties ? _AccessibilityNode.filter(obj) : obj,
+        null,
+        4
+      );
     }
   };
 
@@ -44,8 +68,8 @@
     toObject() {
       return this.rootWebArea;
     }
-    toString() {
-      return this.rootWebArea ? this.rootWebArea.toString() : "{}";
+    toString(collapseEmptyProperties = false) {
+      return this.rootWebArea ? this.rootWebArea.toString(collapseEmptyProperties) : "{}";
     }
     build() {
       this.rootWebArea = new AccessibilityNode(

@@ -1,4 +1,31 @@
 export class AccessibilityNode {
+    private static filter(obj: Partial<AccessibilityNode>): Partial<AccessibilityNode> {
+        const filterProps: string[] = [];
+        for(let prop in obj) {
+            if(prop === "children") {
+                obj[prop] = obj[prop]
+                    .map(child => AccessibilityNode.filter(child));
+
+                continue;
+            }
+
+            (prop === "source" || (value => {
+                if(value === null || value === undefined) return true;
+                if(Array.isArray(value) && value.length === 0) return true;
+                if(typeof(value) === "string" && !value.trim().length) return true;
+                if(Object.getPrototypeOf(value).constructor.name === "Object" && !Object.keys(value).length) return true;
+
+                return false;
+            })(obj[prop]))
+                && filterProps.push(prop);
+        }
+
+        return Object.fromEntries(
+            Object.entries(obj)
+                .filter(entry => !filterProps.includes(entry[0]))
+        );
+    }
+
     public readonly children: AccessibilityNode[];
     public readonly name: string;
     public readonly properties: Record<string, unknown>;
@@ -30,8 +57,8 @@ export class AccessibilityNode {
         this.value = value;
     }
 
-    public toString(): string {
-        return JSON.stringify({
+    public toString(collapseEmptyProperties: boolean = false): string {
+        const obj: Partial<AccessibilityNode> = JSON.parse(JSON.stringify({
             children: this.children,
             name: this.name,
             role: this.role,
@@ -40,6 +67,14 @@ export class AccessibilityNode {
             states: this.states,
             description: this.description,
             value: this.value
-        }, null, 4);
+        }));
+
+        return JSON.stringify(
+            collapseEmptyProperties
+                ? AccessibilityNode.filter(obj)
+                : obj,
+            null,
+            4
+        );
     }
 };

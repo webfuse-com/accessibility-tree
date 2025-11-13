@@ -16,8 +16,8 @@ export class AccessibilityTree {
         return this.rootWebArea;
     }
 
-    public toString(): string {
-        return this.rootWebArea ? this.rootWebArea.toString() : "{}";
+    public toString(collapseEmptyProperties: boolean = false): string {
+        return this.rootWebArea ? this.rootWebArea.toString(collapseEmptyProperties) : "{}";
     }
 
     public build(): this {

@@ -2,7 +2,26 @@
 import { JSDOM } from "jsdom";
 
 // src/AccessibilityNode.ts
-var AccessibilityNode = class {
+var AccessibilityNode = class _AccessibilityNode {
+  static filter(obj) {
+    const filterProps = [];
+    for (let prop in obj) {
+      if (prop === "children") {
+        obj[prop] = obj[prop].map((child) => _AccessibilityNode.filter(child));
+        continue;
+      }
+      (prop === "source" || ((value) => {
+        if (value === null || value === void 0) return true;
+        if (Array.isArray(value) && value.length === 0) return true;
+        if (typeof value === "string" && !value.trim().length) return true;
+        if (Object.getPrototypeOf(value).constructor.name === "Object" && !Object.keys(value).length) return true;
+        return false;
+      })(obj[prop])) && filterProps.push(prop);
+    }
+    return Object.fromEntries(
+      Object.entries(obj).filter((entry) => !filterProps.includes(entry[0]))
+    );
+  }
   children;
   name;
   properties;
@@ -21,8 +40,8 @@ var AccessibilityNode = class {
     this.description = description;
     this.value = value;
   }
-  toString() {
-    return JSON.stringify({
+  toString(collapseEmptyProperties = false) {
+    const obj = JSON.parse(JSON.stringify({
       children: this.children,
       name: this.name,
       role: this.role,
@@ -31,7 +50,12 @@ var AccessibilityNode = class {
       states: this.states,
       description: this.description,
       value: this.value
-    }, null, 4);
+    }));
+    return JSON.stringify(
+      collapseEmptyProperties ? _AccessibilityNode.filter(obj) : obj,
+      null,
+      4
+    );
   }
 };
 
@@ -46,8 +70,8 @@ var AccessibilityTree = class {
   toObject() {
     return this.rootWebArea;
   }
-  toString() {
-    return this.rootWebArea ? this.rootWebArea.toString() : "{}";
+  toString(collapseEmptyProperties = false) {
+    return this.rootWebArea ? this.rootWebArea.toString(collapseEmptyProperties) : "{}";
   }
   build() {
     this.rootWebArea = new AccessibilityNode(

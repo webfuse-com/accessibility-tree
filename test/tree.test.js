@@ -6,7 +6,8 @@ import { parseDOM, AccessibilityTree } from "../dist/api.js";
 
 const dom = parseDOM(readFileSync(join(import.meta.dirname, "dom.html")).toString());
 
-const expectedDOMTree = readFileSync(join(import.meta.dirname, "dom.tree.expected.json")).toString();
+const expectedTree = readFileSync(join(import.meta.dirname, "tree.expected.json")).toString();
+const expectedTreeCollapsed = readFileSync(join(import.meta.dirname, "tree.expected.collapsed.json")).toString();
 
 
 const accessibilityTree = new AccessibilityTree(dom);
@@ -16,23 +17,32 @@ assertEqual(accessibilityTree.toObject(), null, "Invalid empty accessibility tre
 
 accessibilityTree.build();
 
-const accessibilityTreeObject = accessibilityTree.toObject();
-const accessibilityTreeString = accessibilityTree.toString();
+const actualTreeObject = accessibilityTree.toObject();
+const actualTreeString = accessibilityTree.toString();
+const actualTreeStringCollapsed = accessibilityTree.toString(true);
 
-writeFileSync(join(import.meta.dirname, "dom.tree.actual.json"), accessibilityTree.toString());
+writeFileSync(join(import.meta.dirname, "tree.actual.obj.json"), JSON.stringify(actualTreeObject, null, 4));
+writeFileSync(join(import.meta.dirname, "tree.actual.json"), actualTreeString);
+writeFileSync(join(import.meta.dirname, "tree.actual.collapsed.json"), actualTreeStringCollapsed);
 
-assertEqual(accessibilityTreeObject.source, dom, "Invalid accessibility tree RootWebArea source");
+assertEqual(actualTreeObject.source, dom, "Invalid accessibility tree RootWebArea source");
 
 assertEqual(
-    JSON.parse(JSON.stringify(accessibilityTreeObject)),
-    JSON.parse(expectedDOMTree),
+    JSON.parse(JSON.stringify(actualTreeObject)),
+    JSON.parse(expectedTree),
     "Invalid accessibility tree object (object; flattened)"
 );
 
 assertEqual(
-    accessibilityTreeString,
-    expectedDOMTree,
+    actualTreeString,
+    expectedTree,
     "Invalid accessibility tree object (string)"
+);
+
+assertEqual(
+    actualTreeStringCollapsed,
+    expectedTreeCollapsed,
+    "Invalid accessibility tree object (string, collapsed)"
 );
 
 
