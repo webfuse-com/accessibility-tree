@@ -1,29 +1,68 @@
 export class AccessibilityNode {
-    private static filter(obj: Partial<AccessibilityNode>): Partial<AccessibilityNode> {
-        const filterProps: string[] = [];
+    private static getUniqueSelector(element: HTMLElement): string | null {
+        if(!element.nodeName) return null;
+
+        const parts = [];
+
+        let currentElement: HTMLElement | null = element;
+        while(currentElement) {
+            if(currentElement.id) {
+                parts.unshift(`#${currentElement.id}`);
+
+                break;
+            }
+
+            const selector = [
+                currentElement.nodeName.toLowerCase(),
+                ... currentElement.classList.length
+                    ? [
+                        ".",
+                        ...currentElement.classList
+                    ].join(".")
+                    : []
+            ];
+
+            if(currentElement.parentNode) {
+                const siblings = Array.from(currentElement.parentNode.children)
+                    .filter(el => el.nodeName === currentElement!.nodeName);
+                (siblings.length > 1)
+                    && selector.push(`:nth-of-type(${siblings.indexOf(currentElement) + 1})`);
+            }
+
+            parts.unshift(selector.join(""));
+
+            currentElement = currentElement.parentElement;
+        }
+
+        return parts.join(" > ");
+    }
+
+    private static modify(obj: Partial<AccessibilityNode>, collapseEmptyProperties: boolean): Partial<AccessibilityNode> {
+        const newObj: Partial<AccessibilityNode> = {};
         for(let prop in obj) {
+            if(prop === "source") {
+                newObj[prop] = AccessibilityNode.getUniqueSelector(obj[prop]);
+
+                continue;
+            }
             if(prop === "children") {
-                obj[prop] = obj[prop]
-                    .map(child => AccessibilityNode.filter(child));
+                newObj[prop] = obj[prop]
+                    .map(child => AccessibilityNode.modify(child));
 
                 continue;
             }
 
-            (prop === "source" || (value => {
-                if(value === null || value === undefined) return true;
-                if(Array.isArray(value) && value.length === 0) return true;
-                if(typeof(value) === "string" && !value.trim().length) return true;
-                if(Object.getPrototypeOf(value).constructor.name === "Object" && !Object.keys(value).length) return true;
+            if(collapseEmptyProperties && (
+                (obj[prop] === null || obj[prop] === undefined)
+                || (Array.isArray(obj[prop]) && obj[prop].length === 0)
+                || (typeof(obj[prop]) === "string" && !obj[prop].trim().length)
+                || (Object.getPrototypeOf(obj[prop]).constructor.name === "Object" && !Object.keys(obj[prop]).length)
+            )) continue;
 
-                return false;
-            })(obj[prop]))
-                && filterProps.push(prop);
+            newObj[prop] = obj[prop];
         }
 
-        return Object.fromEntries(
-            Object.entries(obj)
-                .filter(entry => !filterProps.includes(entry[0]))
-        );
+        return newObj;
     }
 
     public readonly children: AccessibilityNode[];
@@ -58,7 +97,7 @@ export class AccessibilityNode {
     }
 
     public toString(collapseEmptyProperties: boolean = false): string {
-        const obj: Partial<AccessibilityNode> = JSON.parse(JSON.stringify({
+        const obj: Partial<AccessibilityNode> = {
             children: this.children,
             name: this.name,
             role: this.role,
@@ -67,12 +106,10 @@ export class AccessibilityNode {
             states: this.states,
             description: this.description,
             value: this.value
-        }));
+        };
 
         return JSON.stringify(
-            collapseEmptyProperties
-                ? AccessibilityNode.filter(obj)
-                : obj,
+            AccessibilityNode.modify(obj, collapseEmptyProperties),
             null,
             4
         );

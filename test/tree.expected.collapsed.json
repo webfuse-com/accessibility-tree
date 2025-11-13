@@ -6,28 +6,23 @@
                     "children": [
                         {
                             "children": [],
-                            "name": "Pasta Lovers",
-                            "properties": {
-                                "level": 1
-                            },
-                            "role": "heading"
+                            "source": "html > body > header > h1"
                         },
                         {
                             "children": [
                                 {
                                     "children": [],
-                                    "role": "link"
+                                    "source": "html > body > header > nav > a:nth-of-type(1)"
                                 },
                                 {
                                     "children": [],
-                                    "role": "link"
+                                    "source": "html > body > header > nav > a:nth-of-type(2)"
                                 }
                             ],
-                            "name": "Main navigation",
-                            "role": "navigation"
+                            "source": "html > body > header > nav"
                         }
                     ],
-                    "role": "banner"
+                    "source": "html > body > header"
                 },
                 {
                     "children": [
@@ -35,111 +30,101 @@
                             "children": [
                                 {
                                     "children": [],
-                                    "name": "A bowl of pasta",
-                                    "role": "img"
+                                    "source": "#about > img"
                                 },
                                 {
                                     "children": [],
-                                    "name": "All about Pasta",
-                                    "properties": {
-                                        "level": 1
-                                    },
-                                    "role": "heading"
+                                    "source": "#about-title"
                                 },
                                 {
                                     "children": [],
-                                    "role": "generic"
+                                    "source": "#about > p"
                                 },
                                 {
                                     "children": [
                                         {
                                             "children": [],
-                                            "role": "listitem"
+                                            "source": "#about > ul > li:nth-of-type(1)"
                                         },
                                         {
                                             "children": [],
-                                            "role": "listitem"
+                                            "source": "#about > ul > li:nth-of-type(2)"
                                         },
                                         {
                                             "children": [],
-                                            "role": "listitem"
+                                            "source": "#about > ul > li:nth-of-type(3)"
                                         }
                                     ],
-                                    "role": "list"
+                                    "source": "#about > ul"
                                 }
                             ],
-                            "name": "All about Pasta",
-                            "role": "region"
+                            "source": "#about"
                         },
                         {
                             "children": [
                                 {
                                     "children": [],
-                                    "name": "Find a Recipe",
-                                    "properties": {
-                                        "level": 2
-                                    },
-                                    "role": "heading"
+                                    "source": "#recipes-title"
                                 },
                                 {
                                     "children": [
                                         {
                                             "children": [],
-                                            "role": "generic"
+                                            "source": "#recipe-hint"
                                         },
                                         {
                                             "children": [],
-                                            "role": "generic"
+                                            "source": "#recipes-section > form > label"
                                         },
                                         {
                                             "children": [
                                                 {
                                                     "children": [],
-                                                    "role": "generic"
+                                                    "source": "#order > option:nth-of-type(1)"
                                                 },
                                                 {
                                                     "children": [],
-                                                    "role": "generic"
+                                                    "source": "#order > option:nth-of-type(2)"
                                                 },
                                                 {
                                                     "children": [],
-                                                    "role": "generic"
+                                                    "source": "#order > option:nth-of-type(3)"
                                                 }
                                             ],
-                                            "role": "generic"
+                                            "source": "#order"
                                         },
                                         {
                                             "children": [],
-                                            "name": "Show pasta recipes",
-                                            "role": "button"
+                                            "source": "#recipes-section > form > button"
                                         }
                                     ],
-                                    "role": "generic",
-                                    "description": "Choose a pasta type to find matching recipes."
+                                    "source": "#recipes-section > form"
                                 },
                                 {
                                     "children": [],
-                                    "role": "status"
+                                    "source": "#recipe-results"
                                 }
                             ],
-                            "name": "Find a Recipe",
-                            "role": "region"
+                            "source": "#recipes-section"
                         }
                     ],
-                    "role": "main"
+                    "source": "html > body > main"
                 },
                 {
                     "children": [
                         {
                             "children": [],
-                            "role": "generic"
+                            "source": "html > body > footer > span"
                         }
                     ],
-                    "role": "contentinfo"
+                    "source": "html > body > footer"
                 }
             ],
-            "role": "generic"
+            "source": "html > body"
         }
     ],
-    "role": "RootWebArea"
+    "name": "",
+    "properties": {},
+    "source": "html",
+    "states": {}
 }

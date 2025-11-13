@@ -11,7 +11,7 @@
                                 "level": 1
                             },
                             "role": "heading",
-                            "source": {},
+                            "source": "html > body > header > h1",
                             "states": {},
                             "description": ""
                         },
@@ -22,7 +22,7 @@
                                     "name": "",
                                     "properties": {},
                                     "role": "link",
-                                    "source": {},
+                                    "source": "html > body > header > nav > a:nth-of-type(1)",
                                     "states": {},
                                     "description": ""
                                 },
@@ -31,7 +31,7 @@
                                     "name": "",
                                     "properties": {},
                                     "role": "link",
-                                    "source": {},
+                                    "source": "html > body > header > nav > a:nth-of-type(2)",
                                     "states": {},
                                     "description": ""
                                 }
@@ -39,7 +39,7 @@
                             "name": "Main navigation",
                             "properties": {},
                             "role": "navigation",
-                            "source": {},
+                            "source": "html > body > header > nav",
                             "states": {},
                             "description": ""
                         }
@@ -47,7 +47,7 @@
                     "name": "",
                     "properties": {},
                     "role": "banner",
-                    "source": {},
+                    "source": "html > body > header",
                     "states": {},
                     "description": ""
                 },
@@ -60,7 +60,7 @@
                                     "name": "A bowl of pasta",
                                     "properties": {},
                                     "role": "img",
-                                    "source": {},
+                                    "source": "#about > img",
                                     "states": {},
                                     "description": ""
                                 },
@@ -71,7 +71,7 @@
                                         "level": 1
                                     },
                                     "role": "heading",
-                                    "source": {},
+                                    "source": "#about-title",
                                     "states": {},
                                     "description": ""
                                 },
@@ -80,7 +80,7 @@
                                     "name": "",
                                     "properties": {},
                                     "role": "generic",
-                                    "source": {},
+                                    "source": "#about > p",
                                     "states": {},
                                     "description": ""
                                 },
@@ -91,7 +91,7 @@
                                             "name": "",
                                             "properties": {},
                                             "role": "listitem",
-                                            "source": {},
+                                            "source": "#about > ul > li:nth-of-type(1)",
                                             "states": {},
                                             "description": ""
                                         },
@@ -100,7 +100,7 @@
                                             "name": "",
                                             "properties": {},
                                             "role": "listitem",
-                                            "source": {},
+                                            "source": "#about > ul > li:nth-of-type(2)",
                                             "states": {},
                                             "description": ""
                                         },
@@ -109,7 +109,7 @@
                                             "name": "",
                                             "properties": {},
                                             "role": "listitem",
-                                            "source": {},
+                                            "source": "#about > ul > li:nth-of-type(3)",
                                             "states": {},
                                             "description": ""
                                         }
@@ -117,7 +117,7 @@
                                     "name": "",
                                     "properties": {},
                                     "role": "list",
-                                    "source": {},
+                                    "source": "#about > ul",
                                     "states": {},
                                     "description": ""
                                 }
@@ -125,7 +125,7 @@
                             "name": "All about Pasta",
                             "properties": {},
                             "role": "region",
-                            "source": {},
+                            "source": "#about",
                             "states": {},
                             "description": ""
                         },
@@ -138,7 +138,7 @@
                                         "level": 2
                                     },
                                     "role": "heading",
-                                    "source": {},
+                                    "source": "#recipes-title",
                                     "states": {},
                                     "description": ""
                                 },
@@ -149,7 +149,7 @@
                                             "name": "",
                                             "properties": {},
                                             "role": "generic",
-                                            "source": {},
+                                            "source": "#recipe-hint",
                                             "states": {},
                                             "description": ""
                                         },
@@ -158,7 +158,7 @@
                                             "name": "",
                                             "properties": {},
                                             "role": "generic",
-                                            "source": {},
+                                            "source": "#recipes-section > form > label",
                                             "states": {},
                                             "description": ""
                                         },
@@ -169,7 +169,7 @@
                                                     "name": "",
                                                     "properties": {},
                                                     "role": "generic",
-                                                    "source": {},
+                                                    "source": "#order > option:nth-of-type(1)",
                                                     "states": {},
                                                     "description": ""
                                                 },
@@ -178,7 +178,7 @@
                                                     "name": "",
                                                     "properties": {},
                                                     "role": "generic",
-                                                    "source": {},
+                                                    "source": "#order > option:nth-of-type(2)",
                                                     "states": {},
                                                     "description": ""
                                                 },
@@ -187,7 +187,7 @@
                                                     "name": "",
                                                     "properties": {},
                                                     "role": "generic",
-                                                    "source": {},
+                                                    "source": "#order > option:nth-of-type(3)",
                                                     "states": {},
                                                     "description": ""
                                                 }
@@ -195,11 +195,7 @@
                                             "name": "",
                                             "properties": {},
                                             "role": "generic",
-                                            "source": {
-                                                "0": {},
-                                                "1": {},
-                                                "2": {}
-                                            },
+                                            "source": "#order",
                                             "states": {},
                                             "description": ""
                                         },
@@ -208,7 +204,7 @@
                                             "name": "Show pasta recipes",
                                             "properties": {},
                                             "role": "button",
-                                            "source": {},
+                                            "source": "#recipes-section > form > button",
                                             "states": {},
                                             "description": ""
                                         }
@@ -216,7 +212,7 @@
                                     "name": "",
                                     "properties": {},
                                     "role": "generic",
-                                    "source": {},
+                                    "source": "#recipes-section > form",
                                     "states": {},
                                     "description": "Choose a pasta type to find matching recipes."
                                 },
@@ -225,7 +221,7 @@
                                     "name": "",
                                     "properties": {},
                                     "role": "status",
-                                    "source": {},
+                                    "source": "#recipe-results",
                                     "states": {},
                                     "description": ""
                                 }
@@ -233,7 +229,7 @@
                             "name": "Find a Recipe",
                             "properties": {},
                             "role": "region",
-                            "source": {},
+                            "source": "#recipes-section",
                             "states": {},
                             "description": ""
                         }
@@ -241,7 +237,7 @@
                     "name": "",
                     "properties": {},
                     "role": "main",
-                    "source": {},
+                    "source": "html > body > main",
                     "states": {},
                     "description": ""
                 },
@@ -252,7 +248,7 @@
                             "name": "",
                             "properties": {},
                             "role": "generic",
-                            "source": {},
+                            "source": "html > body > footer > span",
                             "states": {},
                             "description": ""
                         }
@@ -260,7 +256,7 @@
                     "name": "",
                     "properties": {},
                     "role": "contentinfo",
-                    "source": {},
+                    "source": "html > body > footer",
                     "states": {},
                     "description": ""
                 }
@@ -268,7 +264,7 @@
             "name": "",
             "properties": {},
             "role": "generic",
-            "source": {},
+            "source": "html > body",
             "states": {},
             "description": ""
         }
@@ -276,6 +272,6 @@
     "name": "",
     "role": "RootWebArea",
     "properties": {},
-    "source": {},
+    "source": "html",
     "states": {}
 }

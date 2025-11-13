@@ -1,24 +1,46 @@
 (() => {
   // src/AccessibilityNode.ts
   var AccessibilityNode = class _AccessibilityNode {
-    static propertyIsEmpty(value) {
-      if (value === null || value === void 0) return true;
-      if (Array.isArray(value) && value.length === 0) return true;
-      if (typeof value === "string" && !value.trim().length) return true;
-      if (Object.getPrototypeOf(value).constructor.name !== "Object" && !Object.keys(value).length) return true;
-      return false;
+    static getUniqueSelector(element) {
+      if (!element.nodeName) return null;
+      const parts = [];
+      let currentElement = element;
+      while (currentElement) {
+        if (currentElement.id) {
+          parts.unshift(`#${currentElement.id}`);
+          break;
+        }
+        const selector = [
+          currentElement.nodeName.toLowerCase(),
+          ...currentElement.classList.length ? [
+            ".",
+            ...currentElement.classList
+          ].join(".") : []
+        ];
+        if (currentElement.parentNode) {
+          const siblings = Array.from(currentElement.parentNode.children).filter((el) => el.nodeName === currentElement.nodeName);
+          siblings.length > 1 && selector.push(`:nth-of-type(${siblings.indexOf(currentElement) + 1})`);
+        }
+        parts.unshift(selector.join(""));
+        currentElement = currentElement.parentElement;
+      }
+      return parts.join(" > ");
     }
-    static filter(obj) {
+    static modify(obj, collapseEmptyProperties) {
+      const newObj = {};
       for (let prop in obj) {
-        if (prop === "children") {
-          obj[prop] = obj[prop].map((child) => _AccessibilityNode.filter(child));
+        if (prop === "source") {
+          newObj[prop] = _AccessibilityNode.getUniqueSelector(obj[prop]);
           continue;
         }
-        if (prop === "source" || _AccessibilityNode.propertyIsEmpty(obj[prop])) {
-          delete obj[prop];
+        if (prop === "children") {
+          newObj[prop] = obj[prop].map((child) => _AccessibilityNode.modify(child));
+          continue;
         }
+        if (collapseEmptyProperties && (obj[prop] === null || obj[prop] === void 0 || Array.isArray(obj[prop]) && obj[prop].length === 0 || typeof obj[prop] === "string" && !obj[prop].trim().length || Object.getPrototypeOf(obj[prop]).constructor.name === "Object" && !Object.keys(obj[prop]).length)) continue;
+        newObj[prop] = obj[prop];
       }
-      return obj;
+      return newObj;
     }
     children;
     name;
@@ -50,7 +72,7 @@
         value: this.value
       };
       return JSON.stringify(
-        collapseEmptyProperties ? _AccessibilityNode.filter(obj) : obj,
+        _AccessibilityNode.modify(obj, collapseEmptyProperties),
         null,
         4
       );

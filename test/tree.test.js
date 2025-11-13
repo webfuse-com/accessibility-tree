@@ -6,7 +6,8 @@ import { parseDOM, AccessibilityTree } from "../dist/api.js";
 
 const dom = parseDOM(readFileSync(join(import.meta.dirname, "dom.html")).toString());
 
-const expectedTree = readFileSync(join(import.meta.dirname, "tree.expected.json")).toString();
+const expectedTreeObject = readFileSync(join(import.meta.dirname, "tree.expected.object.json")).toString();
+const expectedTreeString = readFileSync(join(import.meta.dirname, "tree.expected.string.json")).toString();
 const expectedTreeCollapsed = readFileSync(join(import.meta.dirname, "tree.expected.collapsed.json")).toString();
 
 
@@ -19,28 +20,28 @@ accessibilityTree.build();
 
 const actualTreeObject = accessibilityTree.toObject();
 const actualTreeString = accessibilityTree.toString();
-const actualTreeStringCollapsed = accessibilityTree.toString(true);
+const actualTreeCollapsed = accessibilityTree.toString(true);
 
-writeFileSync(join(import.meta.dirname, "tree.actual.obj.json"), JSON.stringify(actualTreeObject, null, 4));
-writeFileSync(join(import.meta.dirname, "tree.actual.json"), actualTreeString);
-writeFileSync(join(import.meta.dirname, "tree.actual.collapsed.json"), actualTreeStringCollapsed);
+writeFileSync(join(import.meta.dirname, "tree.actual.object.json"), JSON.stringify(actualTreeObject, null, 4));
+writeFileSync(join(import.meta.dirname, "tree.actual.string.json"), actualTreeString);
+writeFileSync(join(import.meta.dirname, "tree.actual.collapsed.json"), actualTreeCollapsed);
 
 assertEqual(actualTreeObject.source, dom, "Invalid accessibility tree RootWebArea source");
 
 assertEqual(
     JSON.parse(JSON.stringify(actualTreeObject)),
-    JSON.parse(expectedTree),
+    JSON.parse(expectedTreeObject),
     "Invalid accessibility tree object (object; flattened)"
 );
 
 assertEqual(
     actualTreeString,
-    expectedTree,
+    expectedTreeString,
     "Invalid accessibility tree object (string)"
 );
 
 assertEqual(
-    actualTreeStringCollapsed,
+    expectedTreeCollapsed,
     expectedTreeCollapsed,
     "Invalid accessibility tree object (string, collapsed)"
 );

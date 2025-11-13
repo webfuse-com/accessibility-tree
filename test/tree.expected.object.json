@@ -274,8 +274,8 @@
         }
     ],
     "name": "",
-    "role": "RootWebArea",
     "properties": {},
+    "role": "RootWebArea",
     "source": {},
     "states": {}
 }

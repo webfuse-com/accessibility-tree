@@ -2,7 +2,7 @@
 
 Create an accessibility tree from a document object model (DOM).
 
-> The implementation closely adopts the [W3C Working Draft: Accessible Name and Description Computation 1.2](https://w3c.github.io/accname/).
+> Closely adopts the [W3C Working Draft: Accessible Name and Description Computation 1.2](https://w3c.github.io/accname/).
 
 ## Install
 
@@ -24,7 +24,7 @@ accessibilityTree.build();
 
 // Work with accessibility tree
 const treeStr = accessibilityTree.toString();
-const rootNode = accessibilityTree.toObject();
+                              // .toString(true) // collapse empty properties
 /* {
     role: "RootWebArea",
     name: "",
@@ -32,8 +32,12 @@ const rootNode = accessibilityTree.toObject();
         // ...
     ]
     properties: {},
-    source: document.documentElement,
+    source: "html",                   // Unique CSS selector
     states: {}
+} */
+const rootNode = accessibilityTree.toObject();
+/* & {
+    source: document.documentElement  // Element reference
 } */
 
 // Find accessibility nodes in the tree
