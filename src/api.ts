@@ -3,12 +3,14 @@
 // -------------------------------------
 
 
-import { JSDOM } from "jsdom";
-
-
 export { AccessibilityTree } from "./AccessibilityTree.js";
 
 
-export function parseDOM(html: string) {
-    return new JSDOM(html).window.document.documentElement;
+export async function parseDOM(html: string) {
+    const { JSDOM } = await import("jsdom");
+
+    return new JSDOM(html)
+        .window
+        .document
+        .documentElement;
 }

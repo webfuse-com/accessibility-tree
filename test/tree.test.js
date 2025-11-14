@@ -4,7 +4,7 @@ import { join } from "path";
 import { parseDOM, AccessibilityTree } from "../dist/api.js";
 
 
-const dom = parseDOM(readFileSync(join(import.meta.dirname, "dom.html")).toString());
+const dom = await parseDOM(readFileSync(join(import.meta.dirname, "dom.html")).toString());
 
 const expectedTreeObject = readFileSync(join(import.meta.dirname, "tree.expected.object.json")).toString();
 const expectedTreeString = readFileSync(join(import.meta.dirname, "tree.expected.string.json")).toString();

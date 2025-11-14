@@ -1,6 +1,3 @@
-// src/api.ts
-import { JSDOM } from "jsdom";
-
 // src/AccessibilityNode.ts
 var AccessibilityNode = class _AccessibilityNode {
   static getUniqueSelector(element) {
@@ -331,7 +328,8 @@ var AccessibilityTree = class {
 };
 
 // src/api.ts
-function parseDOM(html) {
+async function parseDOM(html) {
+  const { JSDOM } = await import("jsdom");
   return new JSDOM(html).window.document.documentElement;
 }
 export {

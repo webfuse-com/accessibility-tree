@@ -34,10 +34,12 @@
           continue;
         }
         if (prop === "children") {
-          newObj[prop] = obj[prop].map((child) => _AccessibilityNode.modify(child));
+          if ((obj[prop] ?? []).length) {
+            newObj[prop] = obj[prop].map((child) => _AccessibilityNode.modify(child, collapseEmptyProperties));
+          }
           continue;
         }
-        if (collapseEmptyProperties && (obj[prop] === null || obj[prop] === void 0 || Array.isArray(obj[prop]) && obj[prop].length === 0 || typeof obj[prop] === "string" && !obj[prop].trim().length || Object.getPrototypeOf(obj[prop]).constructor.name === "Object" && !Object.keys(obj[prop]).length)) continue;
+        if (collapseEmptyProperties && (obj[prop] === null || obj[prop] === void 0 || Array.isArray(obj[prop]) && !obj[prop].length || typeof obj[prop] === "string" && !obj[prop].trim().length || Object.getPrototypeOf(obj[prop]).constructor.name === "Object" && !Object.keys(obj[prop]).length)) continue;
         newObj[prop] = obj[prop];
       }
       return newObj;
@@ -294,10 +296,16 @@
     computeStates(element, role) {
       const aria = (name) => (element.getAttribute(name) || "").trim();
       const states = {};
-      states.disabled = aria("aria-disabled") === "true" || void 0;
-      states.expanded = aria("aria-expanded") === "true" || void 0;
+      const disabled = aria("aria-disabled") === "true";
+      if (disabled) {
+        states.disabled = disabled;
+      }
+      const expanded = aria("aria-expanded") === "true";
+      if (expanded) {
+        states.expanded = expanded;
+      }
       if (role === "checkbox") {
-        states.checked = aria("aria-checked") === "true" || element.checked || void 0;
+        states.checked = aria("aria-checked") === "true" || element.checked || false;
       }
       return states;
     }

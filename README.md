@@ -13,7 +13,7 @@ Create an accessibility tree from a document object model (DOM).
 ## Use
 
 ``` js
-// const dom = parseDOM("<!DOCTYPE html><html>...</html>");
+// const dom = await parseDOM("<!DOCTYPE html><html>...</html>");
    const dom = document.documentElement;
 
 // Create tree instance
