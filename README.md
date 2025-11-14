@@ -71,344 +71,262 @@ type AccessibilityNode = {
 ``` html
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <title>All about Pasta</title>
-        <script src="/pasta.js"></script>
-        <style>
-            #banner { display: none; }
-        </style>
-    </head>
-    <body>
-        <header role="banner">
-            <h1>Pasta Lovers</h1>
-            <nav aria-label="Main navigation">
-                <a href="#about">About</a>
-                <a href="#recipes">Recipes</a>
-            </nav>
-        </header>
-        <main role="main">
-            <div id="banner" role="region" aria-live="polite" aria-label="Promotional banner">
-                <a href="/history">Learn more</a> about pasta.
-            </div>
-            <section class="hero" id="about" aria-labelledby="about-title">
-                <img src="pasta.jpg" alt="A bowl of pasta">
-                <h1 id="about-title">All about Pasta</h1>
-                <p>Pasta is delicious and comes in many shapes:</p>
-                <ul>
-                    <li>Spaghetti – Great with tomato sauce.</li>
-                    <li>Penne – Perfect for baked dishes.</li>
-                    <li>Farfalle – Fun bow-tie pasta.</li>
-                </ul>
-            </section>
-            <section id="recipes-section" aria-labelledby="recipes-title">
-                <h2 id="recipes-title">Find a Recipe</h2>
-                <form aria-describedby="recipe-hint">
-                    <p id="recipe-hint">Choose a pasta type to find matching recipes.</p>
-                    <label for="order">Choose pasta recipes:</label>
-                    <select id="order" aria-required="true">
-                        <option>Spaghetti</option>
-                        <option>Penne</option>
-                        <option>Farfalle</option>
-                    </select>
-                    <button
-                        type="button"
-                        onclick="PASTA.showRecipes()"
-                        aria-controls="recipe-results"
-                        aria-label="Show pasta recipes">
-                        Show Recipes
-                    </button>
-                </form>
-                <div id="recipe-results" role="status" aria-live="polite"></div>
-            </section>
-        </main>
-        <footer role="contentinfo">
-            <span>&copy; All about Pasta</span>
-        </footer>
-    </body>
+  <head>
+    <meta charset="utf-8">
+    <title>Pasta</title>
+  </head>
+  <body>
+    <header role="banner">
+      <h1>Pasta Lovers</h1>
+      <nav aria-label="Main nav">
+        <a href="#about">About</a>
+        <a href="#recipes">Recipes</a>
+      </nav>
+    </header>
+    <main role="main">
+      <section id="about" role="region" aria-labelledby="about-in">
+        <h2 id="about-in">About Pasta</h2>
+        <img src="pasta.jpg" alt="Bowl of pasta">
+        <ul aria-label="Pasta types">
+          <li aria-label="Spaghetti">Spaghetti</li>
+          <li aria-label="Penne">Penne</li>
+          <li aria-label="Farfalle">Farfalle</li>
+        </ul>
+      </section>
+      <section id="recipes" role="region" aria-labelledby="recipes-in">
+        <h2 id="recipes-in">Recipes</h2>
+        <form aria-describedby="hint">
+          <label for="type">Type</label>
+          <select id="type" aria-required="true">
+            <option>Spaghetti</option>
+            <option>Penne</option>
+            <option>Farfalle</option>
+          </select>
+          <div role="group" aria-label="Preferences">
+            <label>
+              <input type="checkbox" aria-label="Updates">
+              Updates
+            </label>
+          </div>
+          <button type="button" aria-controls="out" aria-label="Show recipes">Show</button>
+        </form>
+      </section>
+    </main>
+    <footer role="contentinfo" aria-label="Footer">
+      <a role="link" tabindex="0">Social</a>
+    </footer>
+  </body>
 </html>
 ```
 
 ``` json
 {
-    "role": "RootWebArea",
-    "name": "",
-    "states": {},
-    "properties": {},
-    "children": [
+  "role": "RootWebArea",
+  "source": "html",
+  "children": [
+    {
+      "children": [
         {
-            "role": "generic",
-            "name": "",
-            "description": "",
-            "states": {},
-            "properties": {},
-            "children": [
+          "children": [
+            {
+              "name": "Pasta Lovers",
+              "properties": {
+                "level": 1
+              },
+              "role": "heading",
+              "source": "html > body > header > h1"
+            },
+            {
+              "children": [
                 {
-                    "role": "banner",
-                    "name": "",
-                    "description": "",
-                    "states": {},
-                    "properties": {},
-                    "children": [
-                        {
-                            "role": "heading",
-                            "name": "Pasta Lovers",
-                            "description": "",
-                            "states": {},
-                            "properties": {
-                                "level": 1
-                            },
-                            "children": [],
-                            "source": {}
-                        },
-                        {
-                            "role": "navigation",
-                            "name": "Main navigation",
-                            "description": "",
-                            "states": {},
-                            "properties": {},
-                            "children": [
-                                {
-                                    "role": "link",
-                                    "name": "",
-                                    "description": "",
-                                    "states": {},
-                                    "properties": {},
-                                    "children": [],
-                                    "source": {}
-                                },
-                                {
-                                    "role": "link",
-                                    "name": "",
-                                    "description": "",
-                                    "states": {},
-                                    "properties": {},
-                                    "children": [],
-                                    "source": {}
-                                }
-                            ],
-                            "source": {}
-                        }
-                    ],
-                    "source": {}
+                  "role": "link",
+                  "source": "html > body > header > nav > a:nth-of-type(1)"
                 },
                 {
-                    "role": "main",
-                    "name": "",
-                    "description": "",
-                    "states": {},
-                    "properties": {},
-                    "children": [
-                        {
-                            "role": "region",
-                            "name": "All about Pasta",
-                            "description": "",
-                            "states": {},
-                            "properties": {},
-                            "children": [
-                                {
-                                    "role": "img",
-                                    "name": "A bowl of pasta",
-                                    "description": "",
-                                    "states": {},
-                                    "properties": {},
-                                    "children": [],
-                                    "source": {}
-                                },
-                                {
-                                    "role": "heading",
-                                    "name": "All about Pasta",
-                                    "description": "",
-                                    "states": {},
-                                    "properties": {
-                                        "level": 1
-                                    },
-                                    "children": [],
-                                    "source": {}
-                                },
-                                {
-                                    "role": "generic",
-                                    "name": "",
-                                    "description": "",
-                                    "states": {},
-                                    "properties": {},
-                                    "children": [],
-                                    "source": {}
-                                },
-                                {
-                                    "role": "list",
-                                    "name": "",
-                                    "description": "",
-                                    "states": {},
-                                    "properties": {},
-                                    "children": [
-                                        {
-                                            "role": "listitem",
-                                            "name": "",
-                                            "description": "",
-                                            "states": {},
-                                            "properties": {},
-                                            "children": [],
-                                            "source": {}
-                                        },
-                                        {
-                                            "role": "listitem",
-                                            "name": "",
-                                            "description": "",
-                                            "states": {},
-                                            "properties": {},
-                                            "children": [],
-                                            "source": {}
-                                        },
-                                        {
-                                            "role": "listitem",
-                                            "name": "",
-                                            "description": "",
-                                            "states": {},
-                                            "properties": {},
-                                            "children": [],
-                                            "source": {}
-                                        }
-                                    ],
-                                    "source": {}
-                                }
-                            ],
-                            "source": {}
-                        },
-                        {
-                            "role": "region",
-                            "name": "Find a Recipe",
-                            "description": "",
-                            "states": {},
-                            "properties": {},
-                            "children": [
-                                {
-                                    "role": "heading",
-                                    "name": "Find a Recipe",
-                                    "description": "",
-                                    "states": {},
-                                    "properties": {
-                                        "level": 2
-                                    },
-                                    "children": [],
-                                    "source": {}
-                                },
-                                {
-                                    "role": "generic",
-                                    "name": "",
-                                    "description": "Choose a pasta type to find matching recipes.",
-                                    "states": {},
-                                    "properties": {},
-                                    "children": [
-                                        {
-                                            "role": "generic",
-                                            "name": "",
-                                            "description": "",
-                                            "states": {},
-                                            "properties": {},
-                                            "children": [],
-                                            "source": {}
-                                        },
-                                        {
-                                            "role": "generic",
-                                            "name": "",
-                                            "description": "",
-                                            "states": {},
-                                            "properties": {},
-                                            "children": [],
-                                            "source": {}
-                                        },
-                                        {
-                                            "role": "generic",
-                                            "name": "",
-                                            "description": "",
-                                            "states": {},
-                                            "properties": {},
-                                            "children": [
-                                                {
-                                                    "role": "generic",
-                                                    "name": "",
-                                                    "description": "",
-                                                    "states": {},
-                                                    "properties": {},
-                                                    "children": [],
-                                                    "source": {}
-                                                },
-                                                {
-                                                    "role": "generic",
-                                                    "name": "",
-                                                    "description": "",
-                                                    "states": {},
-                                                    "properties": {},
-                                                    "children": [],
-                                                    "source": {}
-                                                },
-                                                {
-                                                    "role": "generic",
-                                                    "name": "",
-                                                    "description": "",
-                                                    "states": {},
-                                                    "properties": {},
-                                                    "children": [],
-                                                    "source": {}
-                                                }
-                                            ],
-                                            "source": {
-                                                "0": {},
-                                                "1": {},
-                                                "2": {}
-                                            }
-                                        },
-                                        {
-                                            "role": "button",
-                                            "name": "Show pasta recipes",
-                                            "description": "",
-                                            "states": {},
-                                            "properties": {},
-                                            "children": [],
-                                            "source": {}
-                                        }
-                                    ],
-                                    "source": {}
-                                },
-                                {
-                                    "role": "status",
-                                    "name": "",
-                                    "description": "",
-                                    "states": {},
-                                    "properties": {},
-                                    "children": [],
-                                    "source": {}
-                                }
-                            ],
-                            "source": {}
-                        }
-                    ],
-                    "source": {}
-                },
-                {
-                    "role": "contentinfo",
-                    "name": "",
-                    "description": "",
-                    "states": {},
-                    "properties": {},
-                    "children": [
-                        {
-                            "role": "generic",
-                            "name": "",
-                            "description": "",
-                            "states": {},
-                            "properties": {},
-                            "children": [],
-                            "source": {}
-                        }
-                    ],
-                    "source": {}
+                  "role": "link",
+                  "source": "html > body > header > nav > a:nth-of-type(2)"
                 }
-            ],
-            "source": {}
+              ],
+              "name": "Main nav",
+              "properties": {
+                "aria-label": "Main nav"
+              },
+              "role": "navigation",
+              "source": "html > body > header > nav"
+            }
+          ],
+          "role": "banner",
+          "source": "html > body > header"
+        },
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "name": "About Pasta",
+                  "properties": {
+                    "level": 2
+                  },
+                  "role": "heading",
+                  "source": "#about-in"
+                },
+                {
+                  "name": "Bowl of pasta",
+                  "role": "img",
+                  "source": "#about > img"
+                },
+                {
+                  "children": [
+                    {
+                      "name": "Spaghetti",
+                      "properties": {
+                        "aria-label": "Spaghetti"
+                      },
+                      "role": "listitem",
+                      "source": "#about > ul > li:nth-of-type(1)"
+                    },
+                    {
+                      "name": "Penne",
+                      "properties": {
+                        "aria-label": "Penne"
+                      },
+                      "role": "listitem",
+                      "source": "#about > ul > li:nth-of-type(2)"
+                    },
+                    {
+                      "name": "Farfalle",
+                      "properties": {
+                        "aria-label": "Farfalle"
+                      },
+                      "role": "listitem",
+                      "source": "#about > ul > li:nth-of-type(3)"
+                    }
+                  ],
+                  "name": "Pasta types",
+                  "properties": {
+                    "aria-label": "Pasta types"
+                  },
+                  "role": "list",
+                  "source": "#about > ul"
+                }
+              ],
+              "name": "About Pasta",
+              "properties": {
+                "aria-labelledby": "about-in"
+              },
+              "role": "region",
+              "source": "#about"
+            },
+            {
+              "children": [
+                {
+                  "name": "Recipes",
+                  "properties": {
+                    "level": 2
+                  },
+                  "role": "heading",
+                  "source": "#recipes-in"
+                },
+                {
+                  "children": [
+                    {
+                      "role": "generic",
+                      "source": "#recipes > form > label"
+                    },
+                    {
+                      "children": [
+                        {
+                          "role": "generic",
+                          "source": "#type > option:nth-of-type(1)"
+                        },
+                        {
+                          "role": "generic",
+                          "source": "#type > option:nth-of-type(2)"
+                        },
+                        {
+                          "role": "generic",
+                          "source": "#type > option:nth-of-type(3)"
+                        }
+                      ],
+                      "properties": {
+                        "aria-required": "true"
+                      },
+                      "role": "generic",
+                      "source": "#type"
+                    },
+                    {
+                      "children": [
+                        {
+                          "children": [
+                            {
+                              "name": "Updates",
+                              "properties": {
+                                "aria-label": "Updates"
+                              },
+                              "role": "checkbox",
+                              "source": "#recipes > form > div > label > input",
+                              "states": {
+                                "checked": false
+                              }
+                            }
+                          ],
+                          "role": "generic",
+                          "source": "#recipes > form > div > label"
+                        }
+                      ],
+                      "name": "Preferences",
+                      "properties": {
+                        "aria-label": "Preferences"
+                      },
+                      "role": "group",
+                      "source": "#recipes > form > div"
+                    },
+                    {
+                      "name": "Show recipes",
+                      "properties": {
+                        "aria-controls": "out",
+                        "aria-label": "Show recipes"
+                      },
+                      "role": "button",
+                      "source": "#recipes > form > button"
+                    }
+                  ],
+                  "properties": {
+                    "aria-describedby": "hint"
+                  },
+                  "role": "generic",
+                  "source": "#recipes > form"
+                }
+              ],
+              "name": "Recipes",
+              "properties": {
+                "aria-labelledby": "recipes-in"
+              },
+              "role": "region",
+              "source": "#recipes"
+            }
+          ],
+          "role": "main",
+          "source": "html > body > main"
+        },
+        {
+          "children": [
+            {
+              "role": "link",
+              "source": "html > body > footer > a"
+            }
+          ],
+          "name": "Footer",
+          "properties": {
+            "aria-label": "Footer"
+          },
+          "role": "contentinfo",
+          "source": "html > body > footer"
         }
-    ],
-    "source": {}
+      ],
+      "role": "generic",
+      "source": "html > body"
+    }
+  ]
 }
 ```

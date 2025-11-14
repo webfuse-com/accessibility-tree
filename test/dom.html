@@ -10,49 +10,64 @@
     </head>
     <body>
         <header role="banner">
-            <h1>Pasta Lovers</h1>
-            <nav aria-label="Main navigation">
-                <a href="#about">About</a>
-                <a href="#recipes">Recipes</a>
+            <h1 id="main-title">Pasta Lovers</h1>
+            <nav aria-label="Main navigation menu">
+                <ul>
+                    <li><a href="#about" aria-label="About pasta">About</a></li>
+                    <li><a href="#recipes" aria-label="Explore pasta recipes">Recipes</a></li>
+                </ul>
             </nav>
         </header>
         <main role="main">
-            <div id="banner" role="region" aria-live="polite" aria-label="Promotional banner">
-                <a href="/history">Learn more</a> about pasta.
+            <div id="banner" role="region" aria-live="polite" aria-label="Special offer" aria-describedby="promo-text">
+                <p id="promo-text">Limited-time offer: Discover the rich history of pasta!</p>
+                <a href="/history" aria-label="Learn more about the history of pasta">Learn more</a>.
             </div>
-            <section class="hero" id="about" aria-labelledby="about-title">
-                <img src="pasta.jpg" alt="A bowl of pasta">
-                <h1 id="about-title">All about Pasta</h1>
-                <p>Pasta is delicious and comes in many shapes:</p>
+            <section class="hero" id="about" role="region" aria-labelledby="about-title" aria-describedby="about-description">
+                <img src="pasta.jpg" alt="A bowl of spaghetti pasta with sauce" role="img" aria-label="A bowl of pasta with tomato sauce" />
+                <h2 id="about-title">All about Pasta</h2>
+                <p id="about-description">Pasta is an essential part of many dishes and comes in various shapes, each suited to different recipes.</p>
                 <ul>
-                    <li>Spaghetti – Great with tomato sauce.</li>
-                    <li>Penne – Perfect for baked dishes.</li>
-                    <li>Farfalle – Fun bow-tie pasta.</li>
+                    <li role="listitem" aria-label="Spaghetti - Great with tomato sauce">Spaghetti</li>
+                    <li role="listitem" aria-label="Penne - Perfect for baked dishes">Penne</li>
+                    <li role="listitem" aria-label="Farfalle - Fun bow-tie pasta">Farfalle</li>
                 </ul>
             </section>
-            <section id="recipes-section" aria-labelledby="recipes-title">
+            <section id="recipes-section" aria-labelledby="recipes-title" role="region">
                 <h2 id="recipes-title">Find a Recipe</h2>
-                <form aria-describedby="recipe-hint">
-                    <p id="recipe-hint">Choose a pasta type to find matching recipes.</p>
-                    <label for="order">Choose pasta recipes:</label>
-                    <select id="order" aria-required="true">
-                        <option>Spaghetti</option>
-                        <option>Penne</option>
-                        <option>Farfalle</option>
+                <form aria-describedby="recipe-hint" role="form" aria-labelledby="recipe-form-title">
+                    <h3 id="recipe-form-title">Recipe Selection Form</h3>
+                    <p id="recipe-hint">Choose a pasta type to find matching recipes. This form allows you to filter recipes by pasta type.</p>
+                    <label for="order" id="order-label" aria-describedby="order-description">Select Pasta Type:</label>
+                    <select id="order" aria-required="true" aria-describedby="order-description">
+                        <option value="spaghetti">Spaghetti</option>
+                        <option value="penne">Penne</option>
+                        <option value="farfalle">Farfalle</option>
                     </select>
+                    <p id="order-description">Select your preferred type of pasta to see recipes that use that type.</p>
+                    <div role="group" aria-labelledby="checkbox-group">
+                        <h3 id="checkbox-group">Recipe Preferences</h3>
+                        <label for="notifications" aria-describedby="notifications-description">
+                            <input type="checkbox" id="notifications" name="notifications" aria-label="Enable recipe update notifications">
+                            Receive recipe updates
+                        </label>
+                        <p id="notifications-description">I would like to receive updates about new pasta recipes.</p>
+                    </div>
                     <button
                         type="button"
                         onclick="PASTA.showRecipes()"
                         aria-controls="recipe-results"
-                        aria-label="Show pasta recipes">
+                        aria-label="Show pasta recipes for selected type"
+                        role="button"
+                        aria-live="assertive">
                         Show Recipes
                     </button>
                 </form>
-                <div id="recipe-results" role="status" aria-live="polite"></div>
+                <div id="recipe-results" role="status" aria-live="polite" aria-label="Recipe Results" aria-hidden="true"></div>
             </section>
         </main>
-        <footer role="contentinfo">
-            <span>&copy; All about Pasta</span>
+        <footer role="contentinfo" aria-label="Footer Information">
+            <p>&copy; 2025 Pasta Lovers Inc. | <span role="link" aria-label="Visit our social media page">Follow us on social media</span></p>
         </footer>
     </body>
 </html>

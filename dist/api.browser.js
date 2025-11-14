@@ -307,6 +307,9 @@
         const match = element.tagName.toLowerCase().match(/^h([1-6])$/);
         properties.level = match ? parseInt(match[1]) : properties.level;
       }
+      Array.from(element.attributes).filter((attr) => /^aria\-.+$/i.test(attr.name)).forEach((attr) => {
+        properties[attr.name] = attr.value;
+      });
       return properties;
     }
     computeValue(element, role) {

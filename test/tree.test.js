@@ -41,7 +41,7 @@ assertEqual(
 );
 
 assertEqual(
-    expectedTreeCollapsed,
+    actualTreeCollapsed,
     expectedTreeCollapsed,
     "Invalid accessibility tree object (string, collapsed)"
 );
@@ -87,10 +87,7 @@ assertEqual(
 
 assertEqual(
     accessibilityNodesByRole[0].states,
-    {
-        disabled: undefined,
-        expanded: undefined
-    },
+    {},
     "Invalid findByRole first accessibility node states"
 );
 
@@ -147,16 +144,13 @@ assertEqual(
 
 assertEqual(
     accessibilityNodesByName[0].states,
-    {
-        disabled: undefined,
-        expanded: undefined
-    },
+    {},
     "Invalid findByName first accessibility node states"
 );
 
 assertEqual(
     accessibilityNodesByName[0].description,
-    "",
+    "Pasta is an essential part of many dishes and comes in various shapes, each suited to different recipes.",
     "Invalid findByName first accessibility node description"
 );
 

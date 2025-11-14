@@ -92,6 +92,7 @@ export class AccessibilityTree {
         if(this.isHidden(element)) return null;
 
         const role = (element.getAttribute("role") || "").trim() || this.getImplicitRole(element);
+
         if([ "none", "presentation" ].includes(role)) {
             const children: AccessibilityNode[] = [];
             for(let childElement of Array.from(element.children)) {
@@ -173,10 +174,12 @@ export class AccessibilityTree {
         if(tagName !== "input") return "generic"
     
         const type = ((element as HTMLInputElement).type || "").toLowerCase();
+
         if([ "button", "submit", "reset", "image" ].includes(type)) return "button";
         if(type === "checkbox") return "checkbox";
         if(type === "radio") return "radio";
         if(type === "range") return "slider";
+
         return "textbox";
     }
 
@@ -289,11 +292,17 @@ export class AccessibilityTree {
 
         const states: Record<string, any> = {};
 
-        states.disabled = (aria("aria-disabled") === "true") || undefined;
-        states.expanded = (aria("aria-expanded") === "true") || undefined;
+        const disabled = (aria("aria-disabled") === "true");
+        if(disabled) {
+            states.disabled = disabled;
+        }
+        const expanded = (aria("aria-expanded") === "true");
+        if(expanded) {
+            states.expanded = expanded;
+        }
 
         if(role === "checkbox") {
-            states.checked = (aria("aria-checked") === "true") || (element as any).checked || undefined;
+            states.checked = (aria("aria-checked") === "true") || (element as any).checked || false;
         }
 
         return states;
@@ -301,10 +310,17 @@ export class AccessibilityTree {
 
     private computeProperties(element: Element, role: string): Record<string, any> {
         const properties: Record<string, any> = {};
+
         if(role === "heading") {
             const match = element.tagName.toLowerCase().match(/^h([1-6])$/);
             properties.level = match ? parseInt(match[1]) : properties.level;
         }
+
+        Array.from(element.attributes)
+            .filter(attr => /^aria\-.+$/i.test(attr.name))
+            .forEach(attr => {
+                properties[attr.name] = attr.value;
+            });
 
         return properties;
     }

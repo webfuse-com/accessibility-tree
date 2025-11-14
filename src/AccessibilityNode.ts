@@ -45,16 +45,19 @@ export class AccessibilityNode {
 
                 continue;
             }
+
             if(prop === "children") {
-                newObj[prop] = obj[prop]
-                    .map(child => AccessibilityNode.modify(child));
+                if((obj[prop] ?? []).length) {
+                    newObj[prop] = obj[prop]
+                        .map(child => AccessibilityNode.modify(child, collapseEmptyProperties));
+                }
 
                 continue;
             }
 
             if(collapseEmptyProperties && (
-                (obj[prop] === null || obj[prop] === undefined)
-                || (Array.isArray(obj[prop]) && obj[prop].length === 0)
+                obj[prop] === null || obj[prop] === undefined
+                || (Array.isArray(obj[prop]) && !obj[prop].length)
                 || (typeof(obj[prop]) === "string" && !obj[prop].trim().length)
                 || (Object.getPrototypeOf(obj[prop]).constructor.name === "Object" && !Object.keys(obj[prop]).length)
             )) continue;

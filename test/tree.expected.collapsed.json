@@ -5,23 +5,59 @@
                 {
                     "children": [
                         {
-                            "children": [],
-                            "source": "html > body > header > h1"
+                            "name": "Pasta Lovers",
+                            "properties": {
+                                "level": 1
+                            },
+                            "role": "heading",
+                            "source": "#main-title"
                         },
                         {
                             "children": [
                                 {
-                                    "children": [],
-                                    "source": "html > body > header > nav > a:nth-of-type(1)"
-                                },
-                                {
-                                    "children": [],
-                                    "source": "html > body > header > nav > a:nth-of-type(2)"
+                                    "children": [
+                                        {
+                                            "children": [
+                                                {
+                                                    "name": "About pasta",
+                                                    "properties": {
+                                                        "aria-label": "About pasta"
+                                                    },
+                                                    "role": "link",
+                                                    "source": "html > body > header > nav > ul > li:nth-of-type(1) > a"
+                                                }
+                                            ],
+                                            "role": "listitem",
+                                            "source": "html > body > header > nav > ul > li:nth-of-type(1)"
+                                        },
+                                        {
+                                            "children": [
+                                                {
+                                                    "name": "Explore pasta recipes",
+                                                    "properties": {
+                                                        "aria-label": "Explore pasta recipes"
+                                                    },
+                                                    "role": "link",
+                                                    "source": "html > body > header > nav > ul > li:nth-of-type(2) > a"
+                                                }
+                                            ],
+                                            "role": "listitem",
+                                            "source": "html > body > header > nav > ul > li:nth-of-type(2)"
+                                        }
+                                    ],
+                                    "role": "list",
+                                    "source": "html > body > header > nav > ul"
                                 }
                             ],
+                            "name": "Main navigation menu",
+                            "properties": {
+                                "aria-label": "Main navigation menu"
+                            },
+                            "role": "navigation",
                             "source": "html > body > header > nav"
                         }
                     ],
+                    "role": "banner",
                     "source": "html > body > header"
                 },
                 {
@@ -29,102 +65,228 @@
                         {
                             "children": [
                                 {
-                                    "children": [],
+                                    "name": "A bowl of pasta with tomato sauce",
+                                    "properties": {
+                                        "aria-label": "A bowl of pasta with tomato sauce"
+                                    },
+                                    "role": "img",
                                     "source": "#about > img"
                                 },
                                 {
-                                    "children": [],
+                                    "name": "All about Pasta",
+                                    "properties": {
+                                        "level": 2
+                                    },
+                                    "role": "heading",
                                     "source": "#about-title"
                                 },
                                 {
-                                    "children": [],
-                                    "source": "#about > p"
+                                    "role": "generic",
+                                    "source": "#about-description"
                                 },
                                 {
                                     "children": [
                                         {
-                                            "children": [],
+                                            "name": "Spaghetti - Great with tomato sauce",
+                                            "properties": {
+                                                "aria-label": "Spaghetti - Great with tomato sauce"
+                                            },
+                                            "role": "listitem",
                                             "source": "#about > ul > li:nth-of-type(1)"
                                         },
                                         {
-                                            "children": [],
+                                            "name": "Penne - Perfect for baked dishes",
+                                            "properties": {
+                                                "aria-label": "Penne - Perfect for baked dishes"
+                                            },
+                                            "role": "listitem",
                                             "source": "#about > ul > li:nth-of-type(2)"
                                         },
                                         {
-                                            "children": [],
+                                            "name": "Farfalle - Fun bow-tie pasta",
+                                            "properties": {
+                                                "aria-label": "Farfalle - Fun bow-tie pasta"
+                                            },
+                                            "role": "listitem",
                                             "source": "#about > ul > li:nth-of-type(3)"
                                         }
                                     ],
+                                    "role": "list",
                                     "source": "#about > ul"
                                 }
                             ],
-                            "source": "#about"
+                            "name": "All about Pasta",
+                            "properties": {
+                                "aria-labelledby": "about-title",
+                                "aria-describedby": "about-description"
+                            },
+                            "role": "region",
+                            "source": "#about",
+                            "description": "Pasta is an essential part of many dishes and comes in various shapes, each suited to different recipes."
                         },
                         {
                             "children": [
                                 {
-                                    "children": [],
+                                    "name": "Find a Recipe",
+                                    "properties": {
+                                        "level": 2
+                                    },
+                                    "role": "heading",
                                     "source": "#recipes-title"
                                 },
                                 {
                                     "children": [
                                         {
-                                            "children": [],
+                                            "name": "Recipe Selection Form",
+                                            "properties": {
+                                                "level": 3
+                                            },
+                                            "role": "heading",
+                                            "source": "#recipe-form-title"
+                                        },
+                                        {
+                                            "role": "generic",
                                             "source": "#recipe-hint"
                                         },
                                         {
-                                            "children": [],
-                                            "source": "#recipes-section > form > label"
+                                            "properties": {
+                                                "aria-describedby": "order-description"
+                                            },
+                                            "role": "generic",
+                                            "source": "#order-label",
+                                            "description": "Select your preferred type of pasta to see recipes that use that type."
                                         },
                                         {
                                             "children": [
                                                 {
-                                                    "children": [],
+                                                    "role": "generic",
                                                     "source": "#order > option:nth-of-type(1)"
                                                 },
                                                 {
-                                                    "children": [],
+                                                    "role": "generic",
                                                     "source": "#order > option:nth-of-type(2)"
                                                 },
                                                 {
-                                                    "children": [],
+                                                    "role": "generic",
                                                     "source": "#order > option:nth-of-type(3)"
                                                 }
                                             ],
-                                            "source": "#order"
+                                            "properties": {
+                                                "aria-required": "true",
+                                                "aria-describedby": "order-description"
+                                            },
+                                            "role": "generic",
+                                            "source": "#order",
+                                            "description": "Select your preferred type of pasta to see recipes that use that type."
                                         },
                                         {
-                                            "children": [],
+                                            "role": "generic",
+                                            "source": "#order-description"
+                                        },
+                                        {
+                                            "children": [
+                                                {
+                                                    "name": "Recipe Preferences",
+                                                    "properties": {
+                                                        "level": 3
+                                                    },
+                                                    "role": "heading",
+                                                    "source": "#checkbox-group"
+                                                },
+                                                {
+                                                    "children": [
+                                                        {
+                                                            "name": "Enable recipe update notifications",
+                                                            "properties": {
+                                                                "aria-label": "Enable recipe update notifications"
+                                                            },
+                                                            "role": "checkbox",
+                                                            "source": "#notifications",
+                                                            "states": {
+                                                                "checked": false
+                                                            }
+                                                        }
+                                                    ],
+                                                    "properties": {
+                                                        "aria-describedby": "notifications-description"
+                                                    },
+                                                    "role": "generic",
+                                                    "source": "#recipes-section > form > div > label",
+                                                    "description": "I would like to receive updates about new pasta recipes."
+                                                },
+                                                {
+                                                    "role": "generic",
+                                                    "source": "#notifications-description"
+                                                }
+                                            ],
+                                            "name": "Recipe Preferences",
+                                            "properties": {
+                                                "aria-labelledby": "checkbox-group"
+                                            },
+                                            "role": "group",
+                                            "source": "#recipes-section > form > div"
+                                        },
+                                        {
+                                            "name": "Show pasta recipes for selected type",
+                                            "properties": {
+                                                "aria-controls": "recipe-results",
+                                                "aria-label": "Show pasta recipes for selected type",
+                                                "aria-live": "assertive"
+                                            },
+                                            "role": "button",
                                             "source": "#recipes-section > form > button"
                                         }
                                     ],
-                                    "source": "#recipes-section > form"
-                                },
-                                {
-                                    "children": [],
-                                    "source": "#recipe-results"
+                                    "name": "Recipe Selection Form",
+                                    "properties": {
+                                        "aria-describedby": "recipe-hint",
+                                        "aria-labelledby": "recipe-form-title"
+                                    },
+                                    "role": "form",
+                                    "source": "#recipes-section > form",
+                                    "description": "Choose a pasta type to find matching recipes. This form allows you to filter recipes by pasta type."
                                 }
                             ],
+                            "name": "Find a Recipe",
+                            "properties": {
+                                "aria-labelledby": "recipes-title"
+                            },
+                            "role": "region",
                             "source": "#recipes-section"
                         }
                     ],
+                    "role": "main",
                     "source": "html > body > main"
                 },
                 {
                     "children": [
                         {
-                            "children": [],
-                            "source": "html > body > footer > span"
+                            "children": [
+                                {
+                                    "name": "Visit our social media page",
+                                    "properties": {
+                                        "aria-label": "Visit our social media page"
+                                    },
+                                    "role": "link",
+                                    "source": "html > body > footer > p > span"
+                                }
+                            ],
+                            "role": "generic",
+                            "source": "html > body > footer > p"
                         }
                     ],
+                    "name": "Footer Information",
+                    "properties": {
+                        "aria-label": "Footer Information"
+                    },
+                    "role": "contentinfo",
                     "source": "html > body > footer"
                 }
             ],
+            "role": "generic",
             "source": "html > body"
         }
     ],
-    "name": "",
-    "properties": {},
-    "source": "html",
-    "states": {}
+    "role": "RootWebArea",
+    "source": "html"
 }
