@@ -329,8 +329,13 @@ var AccessibilityTree = class {
 
 // src/api.ts
 async function parseDOM(html) {
-  const { JSDOM } = await import("jsdom");
-  return new JSDOM(html).window.document.documentElement;
+  try {
+    const { JSDOM } = await import("jsdom");
+    return new JSDOM(html).window.document.documentElement;
+  } catch (err) {
+    if (err?.code !== "ERR_MODULE_NOT_FOUND") throw err;
+    throw new ReferenceError("Install jsdom@22.1.0 to use accessibility tree with Node.js");
+  }
 }
 export {
   AccessibilityTree,

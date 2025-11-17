@@ -352,7 +352,15 @@
                                         "aria-labelledby": "recipe-form-title"
                                     },
                                     "role": "form",
-                                    "source": {},
+                                    "source": {
+                                        "0": {
+                                            "0": {},
+                                            "1": {},
+                                            "2": {}
+                                        },
+                                        "1": {},
+                                        "2": {}
+                                    },
                                     "states": {},
                                     "description": "Choose a pasta type to find matching recipes. This form allows you to filter recipes by pasta type."
                                 }
