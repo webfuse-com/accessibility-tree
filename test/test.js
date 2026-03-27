@@ -13,10 +13,10 @@ process.on("exit", () => {
 
 function printAssertionError(err, message) {
     process.stdout.write(`\x1b[31m${message}\x1b[0m\n`);
-    console.log("\x1b[2mActual:\x1b[0m");
-    console.log(err.actual);
     console.log("\x1b[2mExpected:\x1b[0m");
     console.log(err.expected);
+    console.log("\x1b[2mActual:\x1b[0m");
+    console.log(err.actual);
 
     process.exit(1);
 }

@@ -26,23 +26,25 @@
       }
       return parts.join(" > ");
     }
-    static modify(obj, collapseEmptyProperties) {
-      const newObj = {};
+    static modifyNodeForString(obj, options = {}) {
+      const strObj = {};
       for (let prop in obj) {
         if (prop === "source") {
-          newObj[prop] = _AccessibilityNode.getUniqueSelector(obj[prop]);
+          strObj[prop] = (options.sourceStringCb ?? _AccessibilityNode.getUniqueSelector).call(null, obj[prop]);
           continue;
         }
         if (prop === "children") {
           if ((obj[prop] ?? []).length) {
-            newObj[prop] = obj[prop].map((child) => _AccessibilityNode.modify(child, collapseEmptyProperties));
+            strObj[prop] = obj[prop].map((child) => {
+              return _AccessibilityNode.modifyNodeForString(child, options);
+            });
           }
           continue;
         }
-        if (collapseEmptyProperties && (obj[prop] === null || obj[prop] === void 0 || Array.isArray(obj[prop]) && !obj[prop].length || typeof obj[prop] === "string" && !obj[prop].trim().length || Object.getPrototypeOf(obj[prop]).constructor.name === "Object" && !Object.keys(obj[prop]).length)) continue;
-        newObj[prop] = obj[prop];
+        if ((options.collapseEmptyProperties ?? false) && (obj[prop] === null || obj[prop] === void 0 || Array.isArray(obj[prop]) && !obj[prop].length || typeof obj[prop] === "string" && !obj[prop].trim().length || Object.getPrototypeOf(obj[prop]).constructor.name === "Object" && !Object.keys(obj[prop]).length)) continue;
+        strObj[prop] = obj[prop];
       }
-      return newObj;
+      return strObj;
     }
     children;
     name;
@@ -62,7 +64,7 @@
       this.description = description;
       this.value = value;
     }
-    toString(collapseEmptyProperties = false) {
+    toString(option = {}) {
       const obj = {
         children: this.children,
         name: this.name,
@@ -74,7 +76,7 @@
         value: this.value
       };
       return JSON.stringify(
-        _AccessibilityNode.modify(obj, collapseEmptyProperties),
+        _AccessibilityNode.modifyNodeForString(obj, option),
         null,
         4
       );
@@ -84,16 +86,16 @@
   // src/AccessibilityTree.ts
   var AccessibilityTree = class {
     root;
-    rootWebArea = null;
+    rootWebArea;
     constructor(root) {
       this.root = root;
     }
     // PUBLIC
     toObject() {
-      return this.rootWebArea;
+      return this.rootWebArea ?? null;
     }
-    toString(collapseEmptyProperties = false) {
-      return this.rootWebArea ? this.rootWebArea.toString(collapseEmptyProperties) : "{}";
+    toString(options = {}) {
+      return this.rootWebArea ? this.rootWebArea.toString(options) : "{}";
     }
     build() {
       this.rootWebArea = new AccessibilityNode(

@@ -1,3 +1,12 @@
+type SourceStringCb = (element: Element) => string;
+
+
+export interface AccessibilityNodeStringOptions {
+    collapseEmptyProperties: boolean;
+    sourceStringCb: SourceStringCb;
+}
+
+
 export class AccessibilityNode {
     private static getUniqueSelector(element: HTMLElement): string | null {
         if(!element.nodeName) return null;
@@ -37,35 +46,43 @@ export class AccessibilityNode {
         return parts.join(" > ");
     }
 
-    private static modify(obj: Partial<AccessibilityNode>, collapseEmptyProperties: boolean): Partial<AccessibilityNode> {
-        const newObj: Partial<AccessibilityNode> = {};
+    private static modifyNodeForString(
+        obj: Partial<AccessibilityNode>,
+        options: Partial<AccessibilityNodeStringOptions> = {}
+    ): Partial<AccessibilityNode> {
+        const strObj: Partial<AccessibilityNode> = {};
+
         for(let prop in obj) {
             if(prop === "source") {
-                newObj[prop] = AccessibilityNode.getUniqueSelector(obj[prop]);
+                strObj[prop] = (
+                    options.sourceStringCb ?? AccessibilityNode.getUniqueSelector
+                ).call(null, obj[prop]);
 
                 continue;
             }
 
             if(prop === "children") {
                 if((obj[prop] ?? []).length) {
-                    newObj[prop] = obj[prop]
-                        .map(child => AccessibilityNode.modify(child, collapseEmptyProperties));
+                    strObj[prop] = obj[prop]
+                        .map(child => {
+                            return AccessibilityNode.modifyNodeForString(child, options);
+                        });
                 }
 
                 continue;
             }
 
-            if(collapseEmptyProperties && (
+            if((options.collapseEmptyProperties ?? false) && (
                 obj[prop] === null || obj[prop] === undefined
                 || (Array.isArray(obj[prop]) && !obj[prop].length)
                 || (typeof(obj[prop]) === "string" && !obj[prop].trim().length)
                 || (Object.getPrototypeOf(obj[prop]).constructor.name === "Object" && !Object.keys(obj[prop]).length)
             )) continue;
 
-            newObj[prop] = obj[prop];
+            strObj[prop] = obj[prop];
         }
 
-        return newObj;
+        return strObj;
     }
 
     public readonly children: AccessibilityNode[];
@@ -99,8 +116,8 @@ export class AccessibilityNode {
         this.value = value;
     }
 
-    public toString(collapseEmptyProperties: boolean = false): string {
-        const obj: Partial<AccessibilityNode> = {
+    public toString(option: Partial<AccessibilityNodeStringOptions> = {}): string {
+        const obj = {
             children: this.children,
             name: this.name,
             role: this.role,
@@ -112,7 +129,7 @@ export class AccessibilityNode {
         };
 
         return JSON.stringify(
-            AccessibilityNode.modify(obj, collapseEmptyProperties),
+            AccessibilityNode.modifyNodeForString(obj, option),
             null,
             4
         );

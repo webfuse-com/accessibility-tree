@@ -1,10 +1,10 @@
-import { AccessibilityNode } from "./AccessibilityNode.js";
+import { AccessibilityNodeStringOptions, AccessibilityNode } from "./AccessibilityNode.js";
 
 
 export class AccessibilityTree {
     private readonly root: Document | Element;
 
-    private rootWebArea: AccessibilityNode | null = null;
+    private rootWebArea?: AccessibilityNode;
 
     public constructor(root: Document | Element) {
         this.root = root;
@@ -13,11 +13,13 @@ export class AccessibilityTree {
     // PUBLIC
 
     public toObject(): AccessibilityNode | null {
-        return this.rootWebArea;
+        return this.rootWebArea ?? null;
     }
 
-    public toString(collapseEmptyProperties: boolean = false): string {
-        return this.rootWebArea ? this.rootWebArea.toString(collapseEmptyProperties) : "{}";
+    public toString(options: Partial<AccessibilityNodeStringOptions> = {}): string {
+        return this.rootWebArea
+            ? this.rootWebArea.toString(options)
+            : "{}";
     }
 
     public build(): this {

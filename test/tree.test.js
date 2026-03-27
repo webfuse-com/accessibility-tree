@@ -8,6 +8,7 @@ const dom = await parseDOM(readFileSync(join(import.meta.dirname, "dom.html")).t
 
 const expectedTreeObject = readFileSync(join(import.meta.dirname, "tree.expected.object.json")).toString();
 const expectedTreeString = readFileSync(join(import.meta.dirname, "tree.expected.string.json")).toString();
+const expectedTreeStringCustomSource = readFileSync(join(import.meta.dirname, "tree.expected.string.custom.json")).toString();
 const expectedTreeCollapsed = readFileSync(join(import.meta.dirname, "tree.expected.collapsed.json")).toString();
 
 
@@ -15,12 +16,17 @@ const accessibilityTree = new AccessibilityTree(dom);
 
 assertEqual(accessibilityTree.toObject(), null, "Invalid empty accessibility tree object");
 
-
 accessibilityTree.build();
 
 const actualTreeObject = accessibilityTree.toObject();
 const actualTreeString = accessibilityTree.toString();
-const actualTreeCollapsed = accessibilityTree.toString(true);
+const actualTreeCollapsed = accessibilityTree.toString({
+    collapseEmptyProperties: true
+});
+let i = 0;
+const actualTreeStringCustomSource = accessibilityTree.toString({
+    sourceStringCb: (element => `${element.tagName.toUpperCase()}-${i++}`)
+});
 
 writeFileSync(join(import.meta.dirname, "tree.actual.object.json"), JSON.stringify(actualTreeObject, null, 4));
 writeFileSync(join(import.meta.dirname, "tree.actual.string.json"), actualTreeString);
@@ -44,6 +50,12 @@ assertEqual(
     actualTreeCollapsed,
     expectedTreeCollapsed,
     "Invalid accessibility tree object (string, collapsed)"
+);
+
+assertEqual(
+    actualTreeStringCustomSource,
+    expectedTreeStringCustomSource,
+    "Invalid accessibility tree object (string, custom source)"
 );
 
 

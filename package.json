@@ -11,7 +11,8 @@
     "build:browser": "npx esbuild ./src/api.browser.ts --bundle --outfile=./dist/api.browser.js",
     "build:browser:watch": "npm run build:browser -- --watch",
     "build": "npm run build:lib && npm run build:browser",
-    "test": "node ./test/test.js"
+    "test": "node ./test/test.js",
+    "demo": "node ./demo/demo.js"
   },
   "devDependencies": {
     "esbuild": "^0.25.4",
