@@ -1,0 +1,277 @@
+{
+  "children": [
+    {
+      "children": [
+        {
+          "name": "Pasta Lovers",
+          "properties": {
+            "level": 1
+          },
+          "role": "heading",
+          "source": "#main-title"
+        },
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [
+                    {
+                      "name": "About pasta",
+                      "role": "link",
+                      "source": "html > body > header > nav > ul > li:nth-of-type(1) > a"
+                    }
+                  ],
+                  "properties": {
+                    "posinset": 1,
+                    "setsize": 2
+                  },
+                  "role": "listitem",
+                  "source": "html > body > header > nav > ul > li:nth-of-type(1)"
+                },
+                {
+                  "children": [
+                    {
+                      "name": "Explore pasta recipes",
+                      "role": "link",
+                      "source": "html > body > header > nav > ul > li:nth-of-type(2) > a"
+                    }
+                  ],
+                  "properties": {
+                    "posinset": 2,
+                    "setsize": 2
+                  },
+                  "role": "listitem",
+                  "source": "html > body > header > nav > ul > li:nth-of-type(2)"
+                }
+              ],
+              "role": "list",
+              "source": "html > body > header > nav > ul"
+            }
+          ],
+          "name": "Main navigation menu",
+          "role": "navigation",
+          "source": "html > body > header > nav"
+        }
+      ],
+      "role": "banner",
+      "source": "html > body > header"
+    },
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "name": "A bowl of pasta with tomato sauce",
+              "role": "img",
+              "source": "#about > img"
+            },
+            {
+              "name": "All about Pasta",
+              "properties": {
+                "level": 2
+              },
+              "role": "heading",
+              "source": "#about-title"
+            },
+            {
+              "name": "Pasta is an essential part of many dishes and comes in various shapes, each suited to different recipes.",
+              "role": "paragraph",
+              "source": "#about-description"
+            },
+            {
+              "children": [
+                {
+                  "name": "Spaghetti - Great with tomato sauce",
+                  "properties": {
+                    "posinset": 1,
+                    "setsize": 3
+                  },
+                  "role": "listitem",
+                  "source": "#about > ul > li:nth-of-type(1)"
+                },
+                {
+                  "name": "Penne - Perfect for baked dishes",
+                  "properties": {
+                    "posinset": 2,
+                    "setsize": 3
+                  },
+                  "role": "listitem",
+                  "source": "#about > ul > li:nth-of-type(2)"
+                },
+                {
+                  "name": "Farfalle - Fun bow-tie pasta",
+                  "properties": {
+                    "posinset": 3,
+                    "setsize": 3
+                  },
+                  "role": "listitem",
+                  "source": "#about > ul > li:nth-of-type(3)"
+                }
+              ],
+              "role": "list",
+              "source": "#about > ul"
+            }
+          ],
+          "name": "All about Pasta",
+          "role": "region",
+          "source": "#about",
+          "description": "Pasta is an essential part of many dishes and comes in various shapes, each suited to different recipes."
+        },
+        {
+          "children": [
+            {
+              "name": "Find a Recipe",
+              "properties": {
+                "level": 2
+              },
+              "role": "heading",
+              "source": "#recipes-title"
+            },
+            {
+              "children": [
+                {
+                  "name": "Recipe Selection Form",
+                  "properties": {
+                    "level": 3
+                  },
+                  "role": "heading",
+                  "source": "#recipe-form-title"
+                },
+                {
+                  "name": "Choose a pasta type to find matching recipes. This form allows you to filter recipes by pasta type.",
+                  "role": "paragraph",
+                  "source": "#recipe-hint"
+                },
+                {
+                  "name": "Select Pasta Type:",
+                  "role": "generic",
+                  "source": "#order-label",
+                  "description": "Select your preferred type of pasta to see recipes that use that type."
+                },
+                {
+                  "children": [
+                    {
+                      "name": "Spaghetti",
+                      "role": "option",
+                      "source": "#order > option:nth-of-type(1)",
+                      "states": {
+                        "selected": true
+                      }
+                    },
+                    {
+                      "name": "Penne",
+                      "role": "option",
+                      "source": "#order > option:nth-of-type(2)",
+                      "states": {
+                        "selected": false
+                      }
+                    },
+                    {
+                      "name": "Farfalle",
+                      "role": "option",
+                      "source": "#order > option:nth-of-type(3)",
+                      "states": {
+                        "selected": false
+                      }
+                    }
+                  ],
+                  "name": "Select Pasta Type:",
+                  "properties": {
+                    "required": true
+                  },
+                  "role": "combobox",
+                  "source": "#order",
+                  "description": "Select your preferred type of pasta to see recipes that use that type.",
+                  "value": "Spaghetti"
+                },
+                {
+                  "name": "Select your preferred type of pasta to see recipes that use that type.",
+                  "role": "paragraph",
+                  "source": "#order-description"
+                },
+                {
+                  "children": [
+                    {
+                      "name": "Recipe Preferences",
+                      "properties": {
+                        "level": 3
+                      },
+                      "role": "heading",
+                      "source": "#checkbox-group"
+                    },
+                    {
+                      "children": [
+                        {
+                          "name": "Enable recipe update notifications",
+                          "role": "checkbox",
+                          "source": "#notifications",
+                          "states": {
+                            "checked": false
+                          }
+                        }
+                      ],
+                      "name": "Receive recipe updates",
+                      "role": "generic",
+                      "source": "#recipes-section > form > div > label",
+                      "description": "I would like to receive updates about new pasta recipes."
+                    },
+                    {
+                      "name": "I would like to receive updates about new pasta recipes.",
+                      "role": "paragraph",
+                      "source": "#notifications-description"
+                    }
+                  ],
+                  "name": "Recipe Preferences",
+                  "role": "group",
+                  "source": "#recipes-section > form > div"
+                },
+                {
+                  "name": "Show pasta recipes for selected type",
+                  "properties": {
+                    "controls": [
+                      "recipe-results"
+                    ],
+                    "live": "assertive"
+                  },
+                  "role": "button",
+                  "source": "#recipes-section > form > button"
+                }
+              ],
+              "name": "Recipe Selection Form",
+              "role": "form",
+              "source": "#recipes-section > form",
+              "description": "Choose a pasta type to find matching recipes. This form allows you to filter recipes by pasta type."
+            }
+          ],
+          "name": "Find a Recipe",
+          "role": "region",
+          "source": "#recipes-section"
+        }
+      ],
+      "role": "main",
+      "source": "html > body > main"
+    },
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "name": "Visit our social media page",
+              "role": "link",
+              "source": "html > body > footer > p > span"
+            }
+          ],
+          "name": "© 2025 Pasta Lovers Inc. | Visit our social media page",
+          "role": "paragraph",
+          "source": "html > body > footer > p"
+        }
+      ],
+      "name": "Footer Information",
+      "role": "contentinfo",
+      "source": "html > body > footer"
+    }
+  ],
+  "role": "RootWebArea",
+  "source": "html"
+}

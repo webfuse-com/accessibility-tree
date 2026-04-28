@@ -1,10 +1,15 @@
 import { AccessibilityNodeStringOptions, AccessibilityNode } from "./AccessibilityNode.js";
+import { getImplicitRole, PRESENTATIONAL_ROLES, CHILDREN_PRESENTATIONAL_ROLES, NO_ROLE } from "./roles.js";
+import { computeAria, computeValue } from "./aria.js";
+import { computeTextAlternative, computeDescription } from "./accname.js";
 
 
 export class AccessibilityTree {
     private readonly root: Document | Element;
 
     private rootWebArea?: AccessibilityNode;
+    private ownedElements: Set<Element> = new Set();
+    private hiddenCache: WeakMap<Element, boolean> = new WeakMap();
 
     public constructor(root: Document | Element) {
         this.root = root;
@@ -23,6 +28,11 @@ export class AccessibilityTree {
     }
 
     public build(): this {
+        this.ownedElements = new Set();
+        this.hiddenCache = new WeakMap();
+
+        this.collectOwnedElements(this.root);
+
         this.rootWebArea = new AccessibilityNode(
             this.buildTree(this.root),
             (this.root as Document)?.title ?? "",
@@ -35,9 +45,7 @@ export class AccessibilityTree {
         return this;
     }
 
-    public traverse(
-        nodeCb: (node: AccessibilityNode, depth: number, parent?: AccessibilityNode) => void
-    ): void {
+    public traverse(nodeCb: (node: AccessibilityNode, depth: number, parent?: AccessibilityNode) => void): void {
         if(!this.rootWebArea) return;
 
         const traverseNode = (node: AccessibilityNode, depth: number, parent?: AccessibilityNode) => {
@@ -75,13 +83,39 @@ export class AccessibilityTree {
 
     // PRIVATE
 
+    private collectOwnedElements(scope: Document | Element): void {
+        const root = (scope as Document).documentElement ? scope as Document : scope as Element;
+
+        const owners = (root as any).querySelectorAll?.("[aria-owns]") as NodeListOf<Element> | undefined;
+        if(!owners) return;
+
+        for(const owner of Array.from(owners)) {
+            const ids = (owner.getAttribute("aria-owns") || "").trim();
+            if(!ids) continue;
+
+            for(let id of ids.split(/\s+/)) {
+                const owned = owner.ownerDocument?.getElementById(id);
+                owned
+                    && this.ownedElements.add(owned);
+            }
+        }
+    }
+
     private buildTree(root: Document | Element): AccessibilityNode[] {
-        const start = (root as Document).documentElement
-            ? (root as Document).body || (root as Document).documentElement
-            : (root as Element);
+        let start: Element;
+        if((root as Document).documentElement) {
+            start = (root as Document).body || (root as Document).documentElement;
+        } else if((root as Element).tagName?.toLowerCase() === "html") {
+            const body = (root as Element).querySelector("body");
+            start = body ?? (root as Element);
+        } else {
+            start = root as Element;
+        }
 
         const result: AccessibilityNode[] = [];
-        for(let element of Array.from(start!.children)) {
+        for(let element of Array.from(start.children)) {
+            if(this.ownedElements.has(element)) continue;
+
             const node = this.elementToAccessibilityNode(element, new Set());
             node
                 && result.push(node);
@@ -93,11 +127,13 @@ export class AccessibilityTree {
     private elementToAccessibilityNode(element: Element, owningChain: Set<Element>): AccessibilityNode | null {
         if(this.isHidden(element)) return null;
 
-        const role = (element.getAttribute("role") || "").trim() || this.getImplicitRole(element);
+        const role: string = this.resolveRole(element);
 
-        if([ "none", "presentation" ].includes(role)) {
+        if(PRESENTATIONAL_ROLES.has(role)) {
             const children: AccessibilityNode[] = [];
             for(let childElement of Array.from(element.children)) {
+                if(this.ownedElements.has(childElement) && !owningChain.has(childElement)) continue;
+
                 const childNode = this.elementToAccessibilityNode(childElement, owningChain);
                 if(childNode) children.push(childNode);
             }
@@ -105,39 +141,136 @@ export class AccessibilityTree {
             if(children.length === 0) return null;
             if(children.length === 1) return children[0];
 
-            return new AccessibilityNode(children, "", "group", {}, element, {});
+            return new AccessibilityNode(children, "", "generic", {}, element, {});
         }
 
-        const name = this.computeAccessibleName(element, new Set());
-        const description = this.computeAccessibleDescription(element, new Set());
-        const states = this.computeStates(element, role);
-        const properties = this.computeProperties(element, role);
+        const name = computeTextAlternative(element, {
+            visited: new Set(),
+            isRoot: true,
+            isReferenced: false,
+            roleOf: el => this.resolveRole(el),
+            isHidden: el => this.isHidden(el)
+        });
+        const description = computeDescription(element, name, {
+            roleOf: el => this.resolveRole(el),
+            isHidden: el => this.isHidden(el)
+        });
+        const {
+            states,
+            properties
+        } = computeAria(element, role);
+        const value = computeValue(element, role);
+
+        if(name) {
+            const ariaLabel = (element.getAttribute("aria-label") || "").trim();
+            if(ariaLabel && ariaLabel === name) delete properties.label;
+            if((element.getAttribute("aria-labelledby") || "").trim()) delete properties.labelledby;
+        }
+        if(description) {
+            const ariaDesc = (element.getAttribute("aria-description") || "").trim();
+            if(ariaDesc && ariaDesc === description) delete properties.description;
+            if((element.getAttribute("aria-describedby") || "").trim()) delete properties.describedby;
+        }
 
         const children: AccessibilityNode[] = [];
-        if(!this.isLeafRole(role)) {
+        if(!CHILDREN_PRESENTATIONAL_ROLES.has(role)) {
             for(let childElement of Array.from(element.children)) {
+                if(this.ownedElements.has(childElement) && !owningChain.has(childElement)) continue;
+
                 const childNode = this.elementToAccessibilityNode(childElement, owningChain);
                 childNode
                     && children.push(childNode);
             }
         }
 
-        const owns = (element.getAttribute("aria-owns") || "").trim();
-        for(let id of (owns ?? "").split(/\s+/)) {
-            const owned = element.ownerDocument?.getElementById(id);
-            if(!owned || owningChain.has(owned)) continue;
-            owningChain.add(owned);
-            const ownedNode = this.elementToAccessibilityNode(owned, owningChain);
-            owningChain.delete(owned);
-            if(ownedNode) children.push(ownedNode);
+        const owns: string = (element.getAttribute("aria-owns") || "").trim();
+        if(owns) {
+            for(let id of owns.split(/\s+/)) {
+                const owned = element.ownerDocument?.getElementById(id);
+                if(!owned || owningChain.has(owned)) continue;
+
+                owningChain.add(owned);
+                const ownedNode = this.elementToAccessibilityNode(owned, owningChain);
+                owningChain.delete(owned);
+
+                ownedNode
+                    && children.push(ownedNode);
+            }
         }
 
-        const value = this.computeValue(element, role);
+        let effectiveName = name;
+        if(role === NO_ROLE && !effectiveName) {
+            const textOnly = this.directTextContent(element);
+            if(textOnly) effectiveName = textOnly;
+        }
 
-        return new AccessibilityNode(children, name, role, properties, element, states, description, value);
+        if(
+            role === NO_ROLE
+            && !effectiveName
+            && !description
+            && !value
+            && children.length === 0
+            && Object.keys(states).length === 0
+            && Object.keys(properties).length === 0
+        ) {
+            return null;
+        }
+
+        return new AccessibilityNode(children, effectiveName, role, properties, element, states, description || undefined, value);
+    }
+
+    private directTextContent(element: Element): string {
+        const parts: string[] = [];
+        for(let node of Array.from(element.childNodes)) {
+            if(node.nodeType === 3) {
+                const t = (node.textContent || "").replace(/\s+/g, " ").trim();
+                if(t) parts.push(t);
+            }
+        }
+
+        return parts.join(" ");
+    }
+
+    private resolveRole(element: Element): string {
+        const explicit = (element.getAttribute("role") || "").trim().split(/\s+/)[0] || "";
+
+        if(explicit && PRESENTATIONAL_ROLES.has(explicit)) {
+            if(this.hasRevokingTraits(element)) return getImplicitRole(element);
+
+            return explicit;
+        }
+
+        if(explicit) return explicit;
+
+        return getImplicitRole(element);
+    }
+
+    private hasRevokingTraits(element: Element): boolean {
+        const ti: string | null = element.getAttribute("tabindex");
+        if(ti !== null && parseInt(ti, 10) >= 0) return true;
+
+        const tag = element.tagName.toLowerCase();
+        if(tag === "a" && element.hasAttribute("href")) return true;
+        if(tag === "button" || tag === "input" || tag === "select" || tag === "textarea") return true;
+
+        for(let attr of Array.from(element.attributes)) {
+            if(/^aria-/i.test(attr.name) && attr.name !== "aria-hidden") return true;
+        }
+
+        return false;
     }
 
     private isHidden(element: Element): boolean {
+        const cached: boolean | undefined = this.hiddenCache.get(element);
+        if(cached !== undefined) return cached;
+
+        const result: boolean = this.computeHidden(element);
+        this.hiddenCache.set(element, result);
+
+        return result;
+    }
+
+    private computeHidden(element: Element): boolean {
         if((element as HTMLElement).hidden) return true;
         if(element.getAttribute("aria-hidden") === "true") return true;
 
@@ -155,184 +288,19 @@ export class AccessibilityTree {
             }
         } catch {}
 
+        let parent: HTMLElement | null = element.parentElement;
+        while(parent) {
+            if((parent as HTMLElement).hidden) return true;
+            if(parent.getAttribute("aria-hidden") === "true") return true;
+
+            try {
+                const view = parent.ownerDocument?.defaultView!;
+                if(view && view.getComputedStyle(parent).display === "none") return true;
+            } catch {}
+
+            parent = parent.parentElement;
+        }
+
         return false;
-    }
-
-    private getImplicitRole(element: Element): string {
-        const tagName = element.tagName.toLowerCase();
-
-        if(tagName === "a" && (element as HTMLAnchorElement).hasAttribute("href")) return "link";
-        if(tagName === "button") return "button";
-        if(tagName === "img") return "img";
-        if(/^h[1-6]$/.test(tagName)) return "heading";
-        if(tagName === "ul" || tagName === "ol") return "list";
-        if(tagName === "li") return "listitem";
-        if(tagName === "nav") return "navigation";
-        if(tagName === "main") return "main";
-        if(tagName === "header") return "banner";
-        if(tagName === "footer") return "contentinfo";
-        if(tagName === "section" || tagName === "article") return "region";
-
-        if(tagName !== "input") return "generic"
-    
-        const type = ((element as HTMLInputElement).type || "").toLowerCase();
-
-        if([ "button", "submit", "reset", "image" ].includes(type)) return "button";
-        if(type === "checkbox") return "checkbox";
-        if(type === "radio") return "radio";
-        if(type === "range") return "slider";
-
-        return "textbox";
-    }
-
-    private isLeafRole(role: string): boolean {
-        return [
-            "button",
-            "checkbox",
-            "img",
-            "option",
-            "radio",
-            "slider",
-            "textbox"
-        ].includes(role);
-    }
-
-    private computeAccessibleName(element: Element, visited: Set<Element>): string {
-        if(visited.has(element)) return "";
-        visited.add(element);
-
-        const labelledBy = (element.getAttribute("aria-labelledby") || "").trim();
-        if(labelledBy) {
-            const parts: string[] = [];
-            for(let id of labelledBy.split(/\s+/)) {
-                const referenced = element.ownerDocument?.getElementById(id);
-                if(!referenced || this.isHidden(referenced)) continue;
-
-                parts.push(this.computeText(referenced, new Set(visited)));
-            }
-
-            if(parts.length) return parts.join(" ").trim();
-        }
-
-        const ariaLabel = (element.getAttribute("aria-label") || "").trim();
-        if(ariaLabel) return ariaLabel;
-
-        const hostLanguageName = this.hostLanguageName(element);
-        if(hostLanguageName) return hostLanguageName;
-
-        const title = (element.getAttribute("title") || "").trim();
-        if(title) return title;
-
-        return this.computeText(element, new Set(visited));
-    }
-
-    private computeAccessibleDescription(element: Element, visited: Set<Element>): string {
-        if(visited.has(element)) return "";
-        visited.add(element);
-
-        const describedBy = (element.getAttribute("aria-describedby") || "").trim();
-        if(!describedBy) {
-            return (element.getAttribute("title") || "").trim();
-        }
-
-        const parts: string[] = [];
-        for(let id of describedBy.split(/\s+/)) {
-            const referenced = element.ownerDocument?.getElementById(id);
-            if(!referenced || this.isHidden(referenced)) continue;
-
-            parts.push(this.computeText(referenced, new Set(visited)));
-        }
-
-        return parts.join(" ").trim();
-    }
-
-    private computeText(element: Element, visited: Set<Element>): string {
-        if(this.isHidden(element)) return "";
-        if(visited.has(element)) return "";
-
-        visited.add(element);
-
-        const text = [];
-        for(let node of Array.from(element.childNodes)) {
-            if(node.nodeType === 3) {   // Node.TEXT_NODE
-                text.push(node.textContent || "");
-
-                continue;
-            }
-            if(node.nodeType === 1) {   // Node.ELEMENT_NODE
-                text.push(` ${this.computeText(node as Element, new Set(visited))}`);
-
-                continue;
-            }
-        }
-
-        return text.join("").trim();
-    }
-
-    private hostLanguageName(element: Element): string {
-        const tagName = element.tagName.toLowerCase();
-
-        if(tagName === "img") {
-            return (element.getAttribute("alt") || "").trim();
-        }
-        if(tagName === "button" || /^h\d+$/.test(tagName)) {
-            return (element.textContent || "").trim();
-        }
-
-        if(tagName !== "input") return "";
-
-        const inputElement = element as HTMLInputElement;
-        if([ "button", "submit", "reset" ].includes(inputElement.type) && inputElement.value) {
-            return inputElement.value;
-        }
-
-        return inputElement.getAttribute("placeholder") ?? "";
-    }
-
-    private computeStates(element: Element, role: string): Record<string, any> {
-        const aria = (name: string) => (element.getAttribute(name) || "").trim();
-
-        const states: Record<string, any> = {};
-
-        const disabled = (aria("aria-disabled") === "true");
-        if(disabled) {
-            states.disabled = disabled;
-        }
-        const expanded = (aria("aria-expanded") === "true");
-        if(expanded) {
-            states.expanded = expanded;
-        }
-
-        if(role === "checkbox") {
-            states.checked = (aria("aria-checked") === "true") || (element as any).checked || false;
-        }
-
-        return states;
-    }
-
-    private computeProperties(element: Element, role: string): Record<string, any> {
-        const properties: Record<string, any> = {};
-
-        if(role === "heading") {
-            const match = element.tagName.toLowerCase().match(/^h([1-6])$/);
-            properties.level = match ? parseInt(match[1]) : properties.level;
-        }
-
-        Array.from(element.attributes)
-            .filter(attr => /^aria\-.+$/i.test(attr.name))
-            .forEach(attr => {
-                properties[attr.name] = attr.value;
-            });
-
-        return properties;
-    }
-
-    private computeValue(element: Element, role: string): string | undefined {
-        const value = element.getAttribute("aria-valuenow");
-        if(value) return value;
-
-        if(role === "textbox") return (element as HTMLInputElement).value || undefined;
-
-        return undefined;
     }
 }

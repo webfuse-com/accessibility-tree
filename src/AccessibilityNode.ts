@@ -8,37 +8,41 @@ export interface AccessibilityNodeStringOptions {
 
 
 export class AccessibilityNode {
+    private static cssEscape(value: string): string {
+        return (globalThis.CSS && typeof globalThis.CSS.escape === "function")
+            ? globalThis.CSS.escape(value)
+            : value.replace(/[^a-zA-Z0-9_-]/g, ch => `\\${ ch }`);
+    }
+
     private static getUniqueSelector(element: HTMLElement): string | null {
         if(!element.nodeName) return null;
 
-        const parts = [];
+        const parts: string[] = [];
 
         let currentElement: HTMLElement | null = element;
+
         while(currentElement) {
             if(currentElement.id) {
-                parts.unshift(`#${currentElement.id}`);
+                parts.unshift(`#${ AccessibilityNode.cssEscape(currentElement.id) }`);
 
                 break;
             }
 
-            const selector = [
+            const segments = [
                 currentElement.nodeName.toLowerCase(),
-                ... currentElement.classList.length
-                    ? [
-                        ".",
-                        ...currentElement.classList
-                    ].join(".")
-                    : []
+
+                ... Array.from(currentElement.classList).map(c => `.${ AccessibilityNode.cssEscape(c) }`)
             ];
 
             if(currentElement.parentNode) {
                 const siblings = Array.from(currentElement.parentNode.children)
                     .filter(el => el.nodeName === currentElement!.nodeName);
+
                 (siblings.length > 1)
-                    && selector.push(`:nth-of-type(${siblings.indexOf(currentElement) + 1})`);
+                    && segments.push(`:nth-of-type(${siblings.indexOf(currentElement) + 1})`);
             }
 
-            parts.unshift(selector.join(""));
+            parts.unshift(segments.join(""));
 
             currentElement = currentElement.parentElement;
         }
@@ -50,34 +54,36 @@ export class AccessibilityNode {
         obj: Partial<AccessibilityNode>,
         options: Partial<AccessibilityNodeStringOptions> = {}
     ): Partial<AccessibilityNode> {
-        const strObj: Partial<AccessibilityNode> = {};
+        const strObj: Record<string, unknown> = {};
 
-        for(let prop in obj) {
+        for(const prop in obj) {
             if(prop === "source") {
                 strObj[prop] = (
                     options.sourceStringCb ?? AccessibilityNode.getUniqueSelector
-                ).call(null, obj[prop]);
+                ).call(null, obj[prop] as HTMLElement);
 
                 continue;
             }
 
             if(prop === "children") {
-                if((obj[prop] ?? []).length) {
-                    strObj[prop] = obj[prop]
-                        .map(child => {
-                            return AccessibilityNode.modifyNodeForString(child, options);
-                        });
-                }
+                if(!(obj[prop] ?? []).length) continue;
+
+                strObj[prop] = obj[prop]!
+                    .map(child => {
+                        return AccessibilityNode.modifyNodeForString(child, options);
+                    });
 
                 continue;
             }
 
-            if((options.collapseEmptyProperties ?? false) && (
-                obj[prop] === null || obj[prop] === undefined
-                || (Array.isArray(obj[prop]) && !obj[prop].length)
-                || (typeof(obj[prop]) === "string" && !obj[prop].trim().length)
-                || (Object.getPrototypeOf(obj[prop]).constructor.name === "Object" && !Object.keys(obj[prop]).length)
-            )) continue;
+            if(
+                (options.collapseEmptyProperties ?? false) && (
+                    obj[prop] === null || obj[prop] === undefined
+                    || (Array.isArray(obj[prop]) && !obj[prop].length)
+                    || (typeof(obj[prop]) === "string" && !obj[prop].trim().length)
+                    || (Object.getPrototypeOf(obj[prop]).constructor.name === "Object" && !Object.keys(obj[prop]).length)
+                )
+            ) continue;
 
             strObj[prop] = obj[prop];
         }
@@ -131,7 +137,20 @@ export class AccessibilityNode {
         return JSON.stringify(
             AccessibilityNode.modifyNodeForString(obj, option),
             null,
-            4
+            2
         );
+    }
+
+    public toJSON(): unknown {
+        return AccessibilityNode.modifyNodeForString({
+            children: this.children,
+            name: this.name,
+            role: this.role,
+            properties: this.properties,
+            source: this.source,
+            states: this.states,
+            description: this.description,
+            value: this.value
+        });
     }
 };

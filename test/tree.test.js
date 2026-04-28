@@ -9,7 +9,7 @@ const dom = await parseDOM(readFileSync(join(import.meta.dirname, "dom.html")).t
 const expectedTreeObject = readFileSync(join(import.meta.dirname, "tree.expected.object.json")).toString();
 const expectedTreeString = readFileSync(join(import.meta.dirname, "tree.expected.string.json")).toString();
 const expectedTreeStringCustomSource = readFileSync(join(import.meta.dirname, "tree.expected.string.custom.json")).toString();
-const expectedTreeCollapsed = readFileSync(join(import.meta.dirname, "tree.expected.collapsed.json")).toString();
+const expectedTreeCollapsed = readFileSync(join(import.meta.dirname, "tree.expected.string.collapsed.json")).toString();
 
 
 const accessibilityTree = new AccessibilityTree(dom);
@@ -30,7 +30,8 @@ const actualTreeStringCustomSource = accessibilityTree.toString({
 
 writeFileSync(join(import.meta.dirname, "tree.actual.object.json"), JSON.stringify(actualTreeObject, null, 4));
 writeFileSync(join(import.meta.dirname, "tree.actual.string.json"), actualTreeString);
-writeFileSync(join(import.meta.dirname, "tree.actual.collapsed.json"), actualTreeCollapsed);
+writeFileSync(join(import.meta.dirname, "tree.actual.string.custom.json"), actualTreeStringCustomSource);
+writeFileSync(join(import.meta.dirname, "tree.actual.string.collapsed.json"), actualTreeCollapsed);
 
 assertEqual(actualTreeObject.source, dom, "Invalid accessibility tree RootWebArea source");
 
@@ -79,10 +80,11 @@ assertEqual(
     "Invalid findByRole first accessibility node name"
 );
 
+
 assertEqual(
-    accessibilityNodesByRole[0].property,
-    undefined,
-    "Invalid findByRole first accessibility node property"
+    accessibilityNodesByRole[0].properties,
+    {},
+    "Invalid findByRole first accessibility node properties"
 );
 
 assertEqual(
@@ -105,7 +107,7 @@ assertEqual(
 
 assertEqual(
     accessibilityNodesByRole[0].description,
-    "",
+    undefined,
     "Invalid findByRole first accessibility node description"
 );
 
@@ -137,9 +139,9 @@ assertEqual(
 );
 
 assertEqual(
-    accessibilityNodesByName[0].property,
-    undefined,
-    "Invalid findByName first accessibility node property"
+    accessibilityNodesByName[0].properties,
+    {},
+    "Invalid findByName first accessibility node properties"
 );
 
 assertEqual(
