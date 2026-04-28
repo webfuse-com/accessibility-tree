@@ -6,7 +6,7 @@
 export { AccessibilityTree } from "./AccessibilityTree.js";
 
 
-export async function parseDOM(html: string) {
+export async function parseDOM(html: string): Promise<HTMLElement> {
     try {
         const { JSDOM } = await import("jsdom");
 
