@@ -2,7 +2,11 @@
 
 Create an accessibility tree from the Document Object Model (DOM).
 
-> Closely adopts the [W3C Working Draft: Accessible Name and Description Computation 1.2](https://w3c.github.io/accname/).
+> Closely modelled after:
+> 
+> - [WAI-ARIA 1.2](https://www.w3.org/TR/wai-aria-1.2/)
+> - [ARIA in HTML](https://www.w3.org/TR/html-aria/)
+> - [Accessible Name and Description Computation 1.2](https://www.w3.org/TR/accname-1.2/)
 
 ``` js
 // Create tree instance
