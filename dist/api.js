@@ -28,19 +28,20 @@ var AccessibilityNode = class _AccessibilityNode {
   static modifyNodeForString(obj, options = {}) {
     const strObj = {};
     for (const prop in obj) {
+      const property = obj[prop];
       if (prop === "source") {
-        strObj[prop] = (options.sourceStringCb ?? _AccessibilityNode.getUniqueSelector).call(null, obj[prop]);
+        strObj[prop] = (options.sourceStringCb ?? _AccessibilityNode.getUniqueSelector).call(null, property);
         continue;
       }
       if (prop === "children") {
-        if (!(obj[prop] ?? []).length) continue;
+        if (!(property ?? []).length) continue;
         strObj[prop] = obj[prop].map((child) => {
           return _AccessibilityNode.modifyNodeForString(child, options);
         });
         continue;
       }
-      if ((options.collapseEmptyProperties ?? false) && (obj[prop] === null || obj[prop] === void 0 || Array.isArray(obj[prop]) && !obj[prop].length || typeof obj[prop] === "string" && !obj[prop].trim().length || Object.getPrototypeOf(obj[prop]).constructor.name === "Object" && !Object.keys(obj[prop]).length)) continue;
-      strObj[prop] = obj[prop];
+      if ((options.collapseEmptyProperties ?? false) && (property === null || property === void 0 || Array.isArray(property) && !property.length || typeof property === "string" && !property.trim().length || Object.getPrototypeOf(property).constructor.name === "Object" && !Object.keys(property).length)) continue;
+      strObj[prop] = property;
     }
     return strObj;
   }
@@ -777,7 +778,7 @@ function computeTextAlternative(element, ctx) {
     ].includes(tagName)) {
       const vt = (element.getAttribute("aria-valuetext") || "").trim();
       if (vt) return vt;
-      const vn = element.trim();
+      const vn = element.textContent.trim();
       if (vn) return vn;
       if (tagName === "input") {
         const v = element.value;

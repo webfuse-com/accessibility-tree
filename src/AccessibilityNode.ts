@@ -57,16 +57,18 @@ export class AccessibilityNode {
         const strObj: Record<string, unknown> = {};
 
         for(const prop in obj) {
+            const property = obj[prop as keyof AccessibilityNode] as unknown;
+
             if(prop === "source") {
                 strObj[prop] = (
                     options.sourceStringCb ?? AccessibilityNode.getUniqueSelector
-                ).call(null, obj[prop] as HTMLElement);
+                ).call(null, property as HTMLElement);
 
                 continue;
             }
 
             if(prop === "children") {
-                if(!(obj[prop] ?? []).length) continue;
+                if(!(property as Node[] ?? []).length) continue;
 
                 strObj[prop] = obj[prop]!
                     .map(child => {
@@ -78,14 +80,15 @@ export class AccessibilityNode {
 
             if(
                 (options.collapseEmptyProperties ?? false) && (
-                    obj[prop] === null || obj[prop] === undefined
-                    || (Array.isArray(obj[prop]) && !obj[prop].length)
-                    || (typeof(obj[prop]) === "string" && !obj[prop].trim().length)
-                    || (Object.getPrototypeOf(obj[prop]).constructor.name === "Object" && !Object.keys(obj[prop]).length)
+                    (property === null)
+                    || (property === undefined)
+                    || (Array.isArray(property) && !property.length)
+                    || (typeof(property) === "string" && !property.trim().length)
+                    || ((Object.getPrototypeOf(property).constructor.name === "Object") && !Object.keys(property).length)
                 )
             ) continue;
 
-            strObj[prop] = obj[prop];
+            strObj[prop] = property;
         }
 
         return strObj;

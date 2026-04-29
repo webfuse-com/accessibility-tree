@@ -4,18 +4,22 @@
   "author": "Thassilo M. Schiepanski",
   "type": "module",
   "main": "./dist/api.js",
+  "types": "./dist/types/api.d.ts",
   "scripts": {
     "prepare": "husky",
     "build:lib": "npx esbuild ./src/api.ts --bundle --outfile=./dist/api.js --platform=node --packages=external --format=esm --target=es2022",
     "build:lib:watch": "npm run build:lib -- --watch",
     "build:browser": "npx esbuild ./src/api.browser.ts --bundle --outfile=./dist/api.browser.js",
     "build:browser:watch": "npm run build:browser -- --watch",
-    "build": "npm run build:lib && npm run build:browser",
+    "build:types": "npx tsc",
+    "build": "npm run build:lib && npm run build:types && npm run build:browser",
     "test": "node ./test/test.js",
     "demo": "node ./demo/demo.js"
   },
   "devDependencies": {
+    "@types/jsdom": "^28.0.1",
     "esbuild": "^0.25.4",
-    "husky": "^9.1.7"
+    "husky": "^9.1.7",
+    "typescript": "^6.0.3"
   }
 }

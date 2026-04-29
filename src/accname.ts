@@ -269,7 +269,7 @@ export function computeTextAlternative(element: Element, ctx: Ctx): string {
             const vt = (element.getAttribute("aria-valuetext") || "").trim();
             if(vt) return vt;
 
-            const vn = (element).trim();
+            const vn = element.textContent.trim();
             if(vn) return vn;
 
             if(tagName === "input") {
